@@ -1,0 +1,9 @@
+{
+"timeout_duration_sec": 60,
+"custom_user_agent": "Google Bot",
+"allowed_external_domains": "github.com,bitbucket.com",
+"max_path_depth": 3,
+"sensitive_patterns": "internal,secret,private",
+"allowed_extensions": ".js,.html,.htm,.txt,.py,.php,.git,.json,.yaml,",
+"workers": 10
+}
