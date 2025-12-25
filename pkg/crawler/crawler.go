@@ -24,7 +24,7 @@ func StartCrawling(domain string, config *config.Config) {
 	}
 
 	// Gather initial urls (domain, robots and some other brute forced urls)
-	initialUrls, err := utils.GetInitialUrls(domain, registeredDomain)
+	initialUrls, err := utils.GetBruteForcedUrls(domain, registeredDomain)
 	if err != nil {
 		log.Print(err)
 		return

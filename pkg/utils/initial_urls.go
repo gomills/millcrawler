@@ -6,19 +6,24 @@ import (
 	"strings"
 )
 
-// GetInitialUrls generates a list of brute-forced URLs to crawl based on the provided domain and registered domain.
+// GetBruteForcedUrls generates a list of brute-forced URLs to crawl from the provided domain.
 // It creates URLs for common endpoints and subdomains that might be of interest.
-// Returns a slice of parsed Urls and an error if any URL parsing fails.
-func GetInitialUrls(domain string, registeredDomain string) ([]*url.URL, error) {
+// Returns a slice of *url.URL and an error if any url parsing fails.
+func GetBruteForcedUrls(domain string, registeredDomain string) ([]*url.URL, error) {
 
 	if strings.TrimSpace(domain) == "" || strings.TrimSpace(registeredDomain) == "" {
-		return nil, fmt.Errorf("domain or registeredDomain cannot be empty")
+		return nil, fmt.Errorf("empty_domain_or_registeredDomain")
 	}
 
-	urlList := []string{
+	// build brute-forced urls as strings
+	bruteForcedUrlStr := []string{
+
+		// from domain
 		fmt.Sprintf("https://%s/", domain),
 		fmt.Sprintf("https://%s/robots.txt", domain),
 		fmt.Sprintf("https://%s/sitemap.xml", domain),
+
+		// from registered domain, for specific subdomains
 		fmt.Sprintf("https://dev.%s/", registeredDomain),
 		fmt.Sprintf("https://staging.%s/", registeredDomain),
 		fmt.Sprintf("https://admin.%s/", registeredDomain),
@@ -26,18 +31,20 @@ func GetInitialUrls(domain string, registeredDomain string) ([]*url.URL, error) 
 		fmt.Sprintf("https://internal.%s/", registeredDomain),
 	}
 
-	var toCrawlUrls []*url.URL
+	// parse brute-forced url strings and store them
+	bruteForcedUrls := make([]*url.URL, len(bruteForcedUrlStr))
 
-	for _, x := range urlList {
+	for ind := range bruteForcedUrlStr {
 
-		parsedUrl, err := url.Parse(x)
+		parsedUrl, err := url.Parse(bruteForcedUrlStr[ind])
 		if err != nil {
-			return nil, fmt.Errorf("failed to parse URL %q: %w", x, err)
+			return nil, fmt.Errorf("bf_url_parsing_failed")
 		}
 
-		toCrawlUrls = append(toCrawlUrls, parsedUrl)
+		bruteForcedUrls[ind] = parsedUrl
+
 	}
 
-	return toCrawlUrls, nil
+	return bruteForcedUrls, nil
 
 }
