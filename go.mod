@@ -2,12 +2,7 @@ module github.com/gomills/gofocusedcrawler
 
 go 1.24.0
 
-require (
-	golang.org/x/net v0.44.0
-	sigs.k8s.io/yaml v1.6.0
-)
-
-require go.yaml.in/yaml/v2 v2.4.2 // indirect
+require golang.org/x/net v0.44.0
 
 require (
 	github.com/google/uuid v1.6.0

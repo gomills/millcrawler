@@ -5,53 +5,48 @@ import (
 	"fmt"
 	"os"
 	"strings"
-
-	yaml "sigs.k8s.io/yaml/goyaml.v2"
 )
 
 // RawConfig holds the configuration as it appears in the file, with comma-separated strings
 type RawConfig struct {
-	TimeOutDuration        int    `yaml:"timeout_duration_sec" json:"timeout_duration_sec"`
-	CustomUserAgent        string `yaml:"custom_user_agent" json:"custom_user_agent"`
-	AllowedExternalDomains string `yaml:"allowed_external_domains" json:"allowed_external_domains"`
-	MaxPathDepth           int    `yaml:"max_path_depth" json:"max_path_depth"`
-	SensitivePatterns      string `yaml:"sensitive_patterns" json:"sensitive_patterns"`
-	AllowedExtensions      string `yaml:"allowed_extensions" json:"allowed_extensions"`
-	Workers                int    `yaml:"workers" json:"workers"`
+	TimeOutDuration        int    `json:"timeout_duration_sec"`
+	CustomUserAgent        string `json:"custom_user_agent"`
+	AllowedExternalDomains string `json:"allowed_external_domains"`
+	MaxPathDepth           int    `json:"max_path_depth"`
+	SensitivePatterns      string `json:"sensitive_patterns"`
+	AllowedExtensions      string `json:"allowed_extensions"`
+	Workers                int    `json:"workers"`
 }
 
-// Config holds the processed configuration with proper slices
+// Config holds the processed configuration with proper go objects
 type Config struct {
-	TimeOutDuration        int      `yaml:"timeout_duration_sec" json:"timeout_duration_sec"`
-	CustomUserAgent        string   `yaml:"custom_user_agent" json:"custom_user_agent"`
-	AllowedExternalDomains []string `yaml:"allowed_external_domains" json:"allowed_external_domains"`
-	MaxPathDepth           int      `yaml:"max_path_depth" json:"max_path_depth"`
-	SensitivePatterns      []string `yaml:"sensitive_patterns" json:"sensitive_patterns"`
-	AllowedExtensions      []string `yaml:"allowed_extensions" json:"allowed_extensions"`
-	Workers                int      `yaml:"workers" json:"workers"`
+	TimeOutDuration        int      `json:"timeout_duration_sec"`
+	CustomUserAgent        string   `json:"custom_user_agent"`
+	AllowedExternalDomains []string `json:"allowed_external_domains"`
+	MaxPathDepth           int      `json:"max_path_depth"`
+	SensitivePatterns      []string `json:"sensitive_patterns"`
+	AllowedExtensions      []string `json:"allowed_extensions"`
+	Workers                int      `json:"workers"`
 }
 
+// LoadConfig reads the config.json and unmarshals it into a go object
 func LoadConfig(filename string) (*Config, error) {
+
+	// 1. read config.json
 	data, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read file: %w", err)
 	}
 
+	// 2. unmarshal it into raw config
 	var rawConfig RawConfig
 
-	if strings.HasSuffix(filename, ".json") {
-		err = json.Unmarshal(data, &rawConfig)
-	} else if strings.HasSuffix(filename, ".yaml") || strings.HasSuffix(filename, ".yml") {
-		err = yaml.Unmarshal(data, &rawConfig)
-	} else {
-		return nil, fmt.Errorf("unsupported config format")
-	}
-
+	err = json.Unmarshal(data, &rawConfig)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse config: %w", err)
 	}
 
-	// Convert raw config to processed config
+	// 3. convert raw config to processed config with go objects
 	config := &Config{
 		TimeOutDuration:        rawConfig.TimeOutDuration,
 		CustomUserAgent:        rawConfig.CustomUserAgent,
@@ -67,14 +62,20 @@ func LoadConfig(filename string) (*Config, error) {
 
 // parseCommaSeparated splits a comma-separated string into a slice of strings,
 // trimming whitespace from each element
-func parseCommaSeparated(s string) []string {
-	if s == "" {
+func parseCommaSeparated(str string) []string {
+	if str == "" {
 		return nil
 	}
-	parts := strings.Split(s, ",")
-	result := make([]string, 0, len(parts))
-	for _, part := range parts {
-		result = append(result, part)
+
+	// split string
+	parts := strings.Split(str, ",")
+
+	// populate corresponding slice with whitespace trimmed elements
+	result := make([]string, len(parts))
+
+	for ind := range parts {
+		result[ind] = strings.TrimSpace(parts[ind])
 	}
+
 	return result
 }

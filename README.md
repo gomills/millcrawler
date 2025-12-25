@@ -10,11 +10,11 @@ General TODOS
 
 - Improve outcomes: we have to know exactly how the crawl went and the info we want to store from it
 
-- Define stop signals: 429, timeout
+- Define stop signals: 429 / timeout
 
 Side quests TODOS for refactoring:
 
-- Simplify config, just accept .json
+- Simplify config, just accept .json. DONE
 - Discriminate the /crawler file. Separate into crawl_urls and crawler
 - Merge urlextraction with the corresponding crawl_urls
 - Deprecate kw_interrupt_signal
