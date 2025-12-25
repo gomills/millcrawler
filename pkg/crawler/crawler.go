@@ -48,10 +48,10 @@ func StartCrawling(domain string, config *config.Config) {
 	}
 
 	// Set the relay for the keyboard interrupt signal
-	g.Go(func() error {
-		utils.SetKeyboardInterruptSignal(ctx, cancel)
-		return nil
-	})
+	// g.Go(func() error {
+	// 	utils.SetKeyboardInterruptSignal(ctx, cancel)
+	// 	return nil
+	// })
 
 	// Set the pool of workers
 	for range config.Workers {
