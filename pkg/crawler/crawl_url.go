@@ -10,6 +10,7 @@ import (
 	"github.com/gomills/gofocusedcrawler/internal/config"
 	"github.com/gomills/gofocusedcrawler/pkg/queue"
 	"github.com/gomills/gofocusedcrawler/pkg/urlextraction"
+	urls_extr "github.com/gomills/gofocusedcrawler/pkg/urls_extractors"
 	"github.com/gomills/gofocusedcrawler/pkg/utils"
 )
 
@@ -42,7 +43,7 @@ func crawlUrl(ctx context.Context, config *config.Config, url *url.URL, qp *queu
 			return true
 		}
 
-		CrawlOthers(ctx, config, response, qp, domain, registeredDomain)
+		urls_extr.CrawlOthers(ctx, config, response, qp, domain, registeredDomain)
 
 		return false
 	}
@@ -52,13 +53,13 @@ func crawlUrl(ctx context.Context, config *config.Config, url *url.URL, qp *queu
 	// Crawl the body according to the extension
 	switch ext {
 	case "", ".htm", ".html":
-		CrawlHtml(ctx, config, response, qp, domain, registeredDomain)
+		urls_extr.CrawlHtml(ctx, config, response, qp, domain, registeredDomain)
 	case ".js", ".min.js":
 		CrawlJavascript(ctx, config, response, qp, domain, registeredDomain)
 	case ".txt":
-		CrawlTxtFileUrl(ctx, config, url, response, qp, domain, registeredDomain)
+		urls_extr.CrawlTxtFileUrl(ctx, config, url, response, qp, domain, registeredDomain)
 	default:
-		CrawlOthers(ctx, config, response, qp, domain, registeredDomain)
+		urls_extr.CrawlOthers(ctx, config, response, qp, domain, registeredDomain)
 	}
 
 	return false

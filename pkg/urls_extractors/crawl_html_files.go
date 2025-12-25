@@ -1,4 +1,4 @@
-package crawler
+package urls_extractors
 
 import (
 	"context"
