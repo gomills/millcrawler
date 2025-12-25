@@ -1,28 +1,20 @@
-## What GOFOCUSEDCRAWLER brings new to the table:
+# Stealth refactor
 
-- **Tree-Sitter parsing for `.js`.**  
-  Fast, lightweight, yet precise parsing allows selective extraction of URLs from JavaScript files. It won’t miss them as long as they are within the heuristics. Thorough parsing is especially important because most sensitive endpoints are found in JavaScript.
+General TODOS
 
-- **Extensive URL extraction from HTML.**  
-  Not limited to a `"follow a[href]"` algorithm. Like `.js` files, heuristics were extended to avoid missing important URLs. Elements and attributes were carefully selected.
+- Bundle config file in compile time
 
-- **Smart, custom URL validation heuristics.**  
-  Beyond extraction, URLs are validated per the user's config:  
-  - Accept URLs with allowed file extensions.  
-  - Accept subpages (`.htm`, `.html`, or no extension`) only if the path depth is within limits (bypassed by sensitive patterns).  
-  - Same logic applies to **any and all subdomains**.  
-  - External URLs are kept only if they match allowed domains (e.g., `github.com`), but they won’t be crawled.
+- Stealthness: TLS fingerprint and CloudFare
 
-- **Exits on first 429 status code.**  
-  Once flagged by a server, further requests are usually futile.
+- Define URL extraction perfectly
 
-- **Bruteforces certain URLs**, such as `sitemap` and some subdomains like `dev.` or `staging.`
+- Improve outcomes: we have to know exactly how the crawl went and the info we want to store from it
 
-- **URL regexing on non-20x status codes** for debugging sensitive endpoint leaks.
+- Define stop signals: 429, timeout
 
-- **Fully synchronized goroutines.** Once a stop signal is fired, all close automatically thorugh shared context immediately, and no further requests proceed.
+Side quests TODOS for refactoring:
 
-- **Comfortable config file** that eases builds. 
-
-- **Fully modularized, encapsulated codebase.**  
-  Easily modifiable and refactorable, and can be deployed in distributed architectures with minor changes.
+- Simplify config, just accept .json
+- Discriminate the /crawler file. Separate into crawl_urls and crawler
+- Merge urlextraction with the corresponding crawl_urls
+- Deprecate kw_interrupt_signal
