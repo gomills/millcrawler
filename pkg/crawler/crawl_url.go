@@ -9,7 +9,6 @@ import (
 
 	"github.com/gomills/gofocusedcrawler/internal/config"
 	"github.com/gomills/gofocusedcrawler/pkg/queue"
-	"github.com/gomills/gofocusedcrawler/pkg/urlextraction"
 	urls_extr "github.com/gomills/gofocusedcrawler/pkg/urls_extractors"
 	"github.com/gomills/gofocusedcrawler/pkg/utils"
 )
@@ -72,5 +71,5 @@ func CrawlJavascript(ctx context.Context, config *config.Config, response *http.
 	if err != nil {
 		return
 	}
-	urlextraction.TraverseJs(ctx, config, jsCodeByte, qp, domain, registeredDomain)
+	urls_extr.TraverseJs(ctx, config, jsCodeByte, qp, domain, registeredDomain)
 }

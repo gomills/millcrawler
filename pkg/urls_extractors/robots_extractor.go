@@ -1,4 +1,4 @@
-package urlextraction
+package urls_extractors
 
 import (
 	"bufio"

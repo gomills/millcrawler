@@ -15,6 +15,6 @@ General TODOS
 Side quests TODOS for refactoring:
 
 - Simplify config, just accept .json. DONE
-- Discriminate the /crawler file. Separate into crawl_urls and crawler
-- Merge urlextraction with the corresponding crawl_urls
+- Discriminate the /crawler file. Separate into crawl_urls and crawler DONE
+- Merge urlextraction with the corresponding crawl_urls DONE
 - Deprecate kw_interrupt_signal

@@ -10,7 +10,6 @@ import (
 
 	"github.com/gomills/gofocusedcrawler/internal/config"
 	"github.com/gomills/gofocusedcrawler/pkg/queue"
-	"github.com/gomills/gofocusedcrawler/pkg/urlextraction"
 )
 
 func CrawlTxtFileUrl(ctx context.Context, config *config.Config, parsedUrl *url.URL, response *http.Response, qp *queue.Queue, domain string, registeredDomain string) {
@@ -18,7 +17,7 @@ func CrawlTxtFileUrl(ctx context.Context, config *config.Config, parsedUrl *url.
 	if strings.Contains(parsedUrl.Path, "robots.txt") {
 		crawlRobots(ctx, config, response, qp, domain, registeredDomain)
 	} else {
-		urlextraction.RegexFileForUrls(ctx, config, response, qp, domain, registeredDomain)
+		RegexFileForUrls(ctx, config, response, qp, domain, registeredDomain)
 	}
 
 }
@@ -30,5 +29,5 @@ func crawlRobots(ctx context.Context, config *config.Config, response *http.Resp
 		return
 	}
 
-	urlextraction.ExtractUrlsFromRobots(ctx, string(bodyStr), config, qp, domain, registeredDomain)
+	ExtractUrlsFromRobots(ctx, string(bodyStr), config, qp, domain, registeredDomain)
 }
