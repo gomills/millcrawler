@@ -13,10 +13,24 @@ import (
 )
 
 // relevantParentTypes lists JavaScript AST node types (names according to Tree-Sitter) relevant for URL extraction. This is completely heuristic
+// https://github.com/tree-sitter/tree-sitter-javascript/blob/58404d8cf191d69f2674a8fd507bd5776f46cb11/grammar.js#L907
 var relevantParentTypes = []string{
-	"call_expression", "arguments", "import_statement",
-	"pair", "binary_expression", "assignment_pattern",
-	"variable_declarator", "assignment_expression",
+	"call_expression",
+	"import_statement",
+	"assignment_expression",
+	"variable_declarator",
+	"pair",
+	"assignment_pattern",
+	"arguments",
+	"binary_expression",
+	// gpt
+	"return_statement",
+	"export_statement",
+	"object",
+	"expression_statement",
+	"array",
+	"member_expression",
+	"jsx_attribute",
 }
 
 // CrawlJs parses JavaScript code, extracts possible URLs, validates them, and adds them to the queue.
