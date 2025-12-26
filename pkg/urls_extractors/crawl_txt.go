@@ -12,12 +12,14 @@ import (
 	"github.com/gomills/gofocusedcrawler/pkg/queue"
 )
 
+// CrawlTxtFileUrl parses robots.txt for urls and regexes for other .txt's.
 func CrawlTxtFileUrl(ctx context.Context, config *config.Config, parsedUrl *url.URL, response *http.Response, qp *queue.Queue, domain string, registeredDomain string) {
 
 	if strings.Contains(parsedUrl.Path, "robots.txt") {
 		crawlRobots(ctx, config, response, qp, domain, registeredDomain)
+
 	} else {
-		RegexFileForUrls(ctx, config, response, qp, domain, registeredDomain)
+		regexFileForUrls(ctx, config, response, qp, domain, registeredDomain)
 	}
 
 }
@@ -29,5 +31,5 @@ func crawlRobots(ctx context.Context, config *config.Config, response *http.Resp
 		return
 	}
 
-	ExtractUrlsFromRobots(ctx, string(bodyStr), config, qp, domain, registeredDomain)
+	extractUrlsFromRobots(ctx, string(bodyStr), config, qp, domain, registeredDomain)
 }

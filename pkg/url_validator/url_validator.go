@@ -1,4 +1,4 @@
-package urlvalidator
+package url_validator
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 )
 
 // ValidateStringForUrl validates a URL as a string based on heuristics, cleans and parses it.
-// Returns nil pointer if not valid.
+// Returns not-nil error if not valid.
 func ValidateStringForUrl(config *config.Config, possibleUrl string, domain string, registeredDomain string) (*url.URL, error) {
 
 	// 0. trim whitespaces

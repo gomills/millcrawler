@@ -71,5 +71,5 @@ func CrawlJavascript(ctx context.Context, config *config.Config, response *http.
 	if err != nil {
 		return
 	}
-	urls_extr.TraverseJs(ctx, config, jsCodeByte, qp, domain, registeredDomain)
+	urls_extr.CrawlJs(ctx, config, jsCodeByte, qp, domain, registeredDomain)
 }

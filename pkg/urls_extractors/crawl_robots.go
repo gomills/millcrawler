@@ -7,12 +7,12 @@ import (
 
 	"github.com/gomills/gofocusedcrawler/internal/config"
 	"github.com/gomills/gofocusedcrawler/pkg/queue"
-	"github.com/gomills/gofocusedcrawler/pkg/urlvalidator"
+	"github.com/gomills/gofocusedcrawler/pkg/url_validator"
 )
 
-// ExtractUrlsFromRobots performs a URL extraction from robots by parsing it. This functions extracts ALL URLs, it doesn't respect ROBOTS.txt at all.
-// In fact, it quite does the opposite
-func ExtractUrlsFromRobots(ctx context.Context, bodyStr string, config *config.Config, qp *queue.Queue, domain string, registeredDomain string) {
+// extractUrlsFromRobots performs a URL extraction from robots by parsing it. This functions extracts ALL URLs, it doesn't respect ROBOTS.txt at all.
+// In fact, it does the opposite
+func extractUrlsFromRobots(ctx context.Context, bodyStr string, config *config.Config, qp *queue.Queue, domain string, registeredDomain string) {
 	scanner := bufio.NewScanner(strings.NewReader(string(bodyStr)))
 
 	for scanner.Scan() {
@@ -31,7 +31,7 @@ func ExtractUrlsFromRobots(ctx context.Context, bodyStr string, config *config.C
 			}
 
 			values[1] = strings.TrimSpace(values[1])
-			parsedUrl, err := urlvalidator.ValidateStringForUrl(config, values[1], domain, registeredDomain)
+			parsedUrl, err := url_validator.ValidateStringForUrl(config, values[1], domain, registeredDomain)
 			if err == nil {
 				qp.AddUrl(ctx, parsedUrl)
 			}

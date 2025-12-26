@@ -1,4 +1,4 @@
-package urlvalidator
+package url_validator
 
 import (
 	"fmt"

@@ -21,6 +21,10 @@ General TODOS
 
 - Bundle config file in compile time
 
+- Optimize
+
+- Improve external url handling
+
 Side quests TODOS for refactoring:
 
 - Simplify config, just accept .json. DONE
