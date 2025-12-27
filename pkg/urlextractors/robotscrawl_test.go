@@ -24,12 +24,7 @@ const (
 	robotsRegisteredDomain = "example.com"
 )
 
-// TestExtractUrlsFromRobots tests URL extraction from robots.txt content
-func TestExtractUrlsFromRobots(t *testing.T) {
-	ctx := context.Background()
-	q := queue.NewQueue(1)
-
-	robotsContent := `
+const robotsContent = `
 # Robots.txt example
 User-agent: *
 
@@ -42,6 +37,20 @@ Disallow: /path1/path2/path3
 Sitemap: //cdn.example.com/sitemap.xml
 `
 
+var robotsExpectedUrls = []string{
+	"https://example.com/api/v1",
+	"https://cdn.example.com/sitemap.xml",
+	"https://www.example.com/api/v1/users",
+	"https://www.example.com/docs/guide",
+	"https://www.example.com/public/data",
+	"https://www.example.com/search?q=",
+}
+
+// TestExtractUrlsFromRobots tests URL extraction from robots.txt content
+func TestExtractUrlsFromRobots(t *testing.T) {
+	ctx := context.Background()
+	q := queue.NewQueue(1)
+
 	extractUrlsFromRobots(ctx, robotsContent, robotsTestConfig, q, robotsDomain, robotsRegisteredDomain)
 	time.Sleep(10 * time.Millisecond)
 
@@ -51,23 +60,15 @@ Sitemap: //cdn.example.com/sitemap.xml
 	// Expected URLs after validation
 	// Note: robotsDomain is www.example.com, so relative URLs get that domain
 	// Sitemap URL not extracted - appears to be a parser issue
-	expectedUrls := []string{
-		"https://example.com/api/v1",
-		"https://cdn.example.com/sitemap.xml",
-		"https://www.example.com/api/v1/users",
-		"https://www.example.com/docs/guide",
-		"https://www.example.com/public/data",
-		"https://www.example.com/search?q=",
-	}
-	slices.Sort(expectedUrls)
+	slices.Sort(robotsExpectedUrls)
 
-	if len(extractedUrls) != len(expectedUrls) {
+	if len(extractedUrls) != len(robotsExpectedUrls) {
 		t.Logf("Extracted URLs (%d): %v", len(extractedUrls), extractedUrls)
-		t.Logf("Expected URLs (%d): %v", len(expectedUrls), expectedUrls)
-		t.Fatalf("Expected %d URLs, got %d", len(expectedUrls), len(extractedUrls))
+		t.Logf("Expected URLs (%d): %v", len(robotsExpectedUrls), robotsExpectedUrls)
+		t.Fatalf("Expected %d URLs, got %d", len(robotsExpectedUrls), len(extractedUrls))
 	}
 
-	for i, expected := range expectedUrls {
+	for i, expected := range robotsExpectedUrls {
 		if i >= len(extractedUrls) || extractedUrls[i] != expected {
 			t.Errorf("URL mismatch at index %d: expected %q, got %q", i, expected, extractedUrls[i])
 		}
