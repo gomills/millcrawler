@@ -11,7 +11,7 @@ General TODOS
 
     - other scripts: ignore all except robots.txt and sitemap.yaml DONE
     
-    - HTTPs responses: headers for [debugging endpoints] and error payloads.
+    - HTTPs responses: headers for [debugging endpoints] and error payloads. headers, maybe just check  each for https prefix? STILL NOT IMPLEMENTED
 
 - Stealthness:  DONE
     - TLS fingerprinting: https://github.com/refraction-networking/utls
