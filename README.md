@@ -3,27 +3,29 @@
 General TODOS
 
 
-- Define URL extraction perfectly. URLs must come from:
+- URLs must come from, and only from:
 
-    - .js: already working correctly with tree-sitter. maybe revise some settings, but not too much, it already works, don't over engineer.
+    - .js: improve AST parent types. DONE
 
-    - .html: same as with .js.
+    - .html: same as with .js. DONE
 
-    - other scripts: they just will add too much overhead because will have to be regexed. We'll ignore them.
+    - other scripts: ignore all except robots.txt and sitemap.yaml DONE
     
-    - HTTPs responses: we'll inspect headers for [debugging endpoints] and regex error payloads.
+    - HTTPs responses: headers for [debugging endpoints] and error payloads.
 
-- Stealthness: requests (TLS fingerprint) and CloudFare (antibot capacities).
+- Stealthness: 
+    - TLS fingerprinting: https://github.com/refraction-networking/utls
+    - CloudFare: we'll model cloudfare with TLS fingerprinting as well.
 
-- Improve outcomes: we have to know exactly how the crawl went and the info we want to store from it. we should store in a dataframe: URLs crawled, time spent, reason for stop (in code format: timeout, anti_bot, etc.). this will improve predictability.
+- Improve outcome: to improve predictability we should store in a dataframe: URLs crawled, time spent, reason for stop (in code format: timeout, anti_bot, etc.). DONE
 
-- Stop signals should only be: 429 / timeout
-
-- Bundle config file in compile time
+- Take a look at more status codes for bot blocking
 
 - Optimize
 
-- Improve external url handling
+- Improve external url handling. DONE
+
+- Stop signals should only be: 429 / timeout DONE
 
 Side quests TODOS for refactoring:
 
