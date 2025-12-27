@@ -104,7 +104,7 @@ func (q *Queue) GetNCrawledUrls() int {
 	return len(q.foundUrlsSet)
 }
 
-// get all found URLs as a slice
+// get all found URLs as a slice. ONLY FOR TESTING PURPOSES.
 func (q *Queue) GetFoundUrls() []string {
 	q.mu.Lock()
 	defer q.mu.Unlock()
