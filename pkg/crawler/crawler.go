@@ -9,82 +9,84 @@ import (
 	"github.com/gomills/gofocusedcrawler/internal/config"
 	"github.com/gomills/gofocusedcrawler/pkg/queue"
 	"github.com/gomills/gofocusedcrawler/pkg/utils"
-	"github.com/google/uuid"
 	"golang.org/x/net/publicsuffix"
 	"golang.org/x/sync/errgroup"
 )
 
-func StartCrawling(domain string, config *config.Config) {
+// Crawl is the entry point of crawling to a given domain. Returns the crawling outcome.
+func Crawl(domain string, config *config.Config) *CrawlingOutcome {
 
-	// Get registered domain
+	// 0. get registered domain
 	registeredDomain, err := publicsuffix.EffectiveTLDPlusOne(domain)
 	if err != nil {
 		log.Print(err)
-		return
+		return GetCrawlingOutcome(domain, 0, 0, "reg_domain_failed")
 	}
 
-	// Gather initial urls (domain, robots and some other brute forced urls)
-	initialUrls, err := utils.GetBruteForcedUrls(domain, registeredDomain)
+	// 1. get seed urls, which are brute forced url paths and subdomains
+	seedUrls, err := utils.GetBruteForcedUrls(domain, registeredDomain)
 	if err != nil {
 		log.Print(err)
-		return
+		return GetCrawlingOutcome(domain, 0, 0, err.Error())
 	}
 
-	// Instantiate queue
+	// 2. instantiate queue
 	qp := queue.NewQueue(config.Workers)
 
-	// Instantiate context. It will be cancelled on:
-	//	- Timeout
-	//	- Empty queue
-	//	- On first 429 status code of any worker
-	//	- On Ctrl+C signal
+	// 3. instantiate context. It will be cancelled on either:
+	//	- timeout
+	//	- empty queue
+	//	- first 429 status code of any worker
 	timeOutDuration := time.Duration(config.TimeOutDuration) * time.Second
-	ctx, cancel := context.WithTimeout(context.Background(), timeOutDuration)
+
+	ctx, _ := context.WithTimeout(context.Background(), timeOutDuration)
 	g, ctx := errgroup.WithContext(ctx)
 
-	// Enqueue the initial URLs
-	for _, urlInfo := range initialUrls {
-		qp.AddUrl(ctx, urlInfo)
+	// 4. seed the queue
+	for _, seedUrl := range seedUrls {
+		qp.AddUrl(ctx, seedUrl)
 	}
 
-	// Set the relay for the keyboard interrupt signal
-	// g.Go(func() error {
-	// 	utils.SetKeyboardInterruptSignal(ctx, cancel)
-	// 	return nil
-	// })
+	start := time.Now()
 
-	// Set the pool of workers
+	// 5. spam pool of workers
 	for range config.Workers {
 
 		g.Go(func() error {
-			return worker(qp, ctx, cancel, config, domain, registeredDomain)
+			return worker(qp, ctx, config, domain, registeredDomain)
 		})
+
 	}
 
+	// 6. await the error group cancellation
 	if err := g.Wait(); err != nil {
-		fmt.Println("Error:", err)
+		fmt.Println("stop_reason:", err)
 	}
+
+	s_crawling := time.Since(start).Seconds()
+
+	return GetCrawlingOutcome(domain, qp.GetNCrawledUrls(), s_crawling, err.Error())
 
 }
 
-func worker(qp *queue.Queue, ctx context.Context, cancel context.CancelFunc, config *config.Config, domain string, registeredDomain string) error {
-
-	workerId := uuid.New().String()
+// worker is a consumer&producer of the urls queue.
+// It returns error for: empty queue, timeout or a single 429 status code
+func worker(qp *queue.Queue, ctx context.Context, config *config.Config, domain string, registeredDomain string) error {
 
 	for {
 
+		// 1. consume a url from the queue. If nil it's empty queue.
 		url := qp.TakeUrl(ctx)
 		if url == nil {
-			cancel()
-			return nil
+			return fmt.Errorf("empty_queue")
 		}
 
 		log.Println(url.String())
 
-		stopCrawling := crawlUrl(ctx, config, url, qp, domain, registeredDomain, workerId)
-		if stopCrawling {
-			cancel()
-			return fmt.Errorf("429 hit")
+		// 2. crawl it. Error is only for 429 status code hit.
+		err := crawlUrl(ctx, config, url, qp, domain, registeredDomain)
+		if err != nil {
+			return err
 		}
 
 	}

@@ -38,7 +38,7 @@ func GetBruteForcedUrls(domain string, registeredDomain string) ([]*url.URL, err
 
 		parsedUrl, err := url.Parse(bruteForcedUrlStr[ind])
 		if err != nil {
-			return nil, fmt.Errorf("bf_url_parsing_failed")
+			return nil, fmt.Errorf("seed_gen_failed")
 		}
 
 		bruteForcedUrls[ind] = parsedUrl

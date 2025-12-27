@@ -99,3 +99,7 @@ func (q *Queue) TakeUrl(ctx context.Context) *url.URL {
 	}
 
 }
+
+func (q *Queue) GetNCrawledUrls() int {
+	return len(q.foundUrlsSet)
+}
