@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"strings"
 
@@ -25,6 +26,18 @@ func main() {
 
 	log.Printf(">>> Start crawling %s\n\n", domainStr)
 
-	crawler.Crawl(domainStr, config)
+	results := crawler.Crawl(domainStr, config)
 
+	printResults(results)
+}
+
+func printResults(outcome *crawler.CrawlingOutcome) {
+	fmt.Println("\n" + strings.Repeat("=", 60))
+	fmt.Println("CRAWL SUMMARY")
+	fmt.Println(strings.Repeat("=", 60))
+	fmt.Printf("Domain:           %s\n", outcome.Domain)
+	fmt.Printf("URLs Crawled:     %d\n", outcome.N_urls)
+	fmt.Printf("Time Elapsed:     %.2f seconds\n", outcome.S_crawling)
+	fmt.Printf("Stop Reason:      %s\n", outcome.Stop_reason)
+	fmt.Println(strings.Repeat("=", 60) + "\n")
 }
