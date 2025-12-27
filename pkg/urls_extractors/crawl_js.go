@@ -3,7 +3,6 @@ package urls_extractors
 import (
 	"context"
 	"io"
-	"slices"
 	"strings"
 
 	http "github.com/bogdanfinn/fhttp"
@@ -14,25 +13,25 @@ import (
 	tree_sitter_javascript "github.com/tree-sitter/tree-sitter-javascript/bindings/go"
 )
 
-// relevantParentTypes lists JavaScript AST node types (names according to Tree-Sitter) relevant for URL extraction. This is completely heuristic
+// relevantParentTypes maps JavaScript AST node types (names according to Tree-Sitter) relevant for URL extraction. This is completely heuristic
 // https://github.com/tree-sitter/tree-sitter-javascript/blob/58404d8cf191d69f2674a8fd507bd5776f46cb11/grammar.js#L907
-var relevantParentTypes = []string{
-	"call_expression",
-	"import_statement",
-	"assignment_expression",
-	"variable_declarator",
-	"pair",
-	"assignment_pattern",
-	"arguments",
-	"binary_expression",
+var relevantParentTypes = map[string]struct{}{
+	"call_expression":      {},
+	"import_statement":     {},
+	"assignment_expression": {},
+	"variable_declarator":  {},
+	"pair":                 {},
+	"assignment_pattern":   {},
+	"arguments":            {},
+	"binary_expression":    {},
 	// gpt
-	"return_statement",
-	"export_statement",
-	"object",
-	"expression_statement",
-	"array",
-	"member_expression",
-	"jsx_attribute",
+	"return_statement":     {},
+	"export_statement":     {},
+	"object":               {},
+	"expression_statement": {},
+	"array":                {},
+	"member_expression":    {},
+	"jsx_attribute":        {},
 }
 
 // CrawlJs parses JavaScript code, extracts possible URLs, validates them, and adds them to the queue.
@@ -129,7 +128,10 @@ func processStringNode(node *tree_sitter.Node, foundUrls *[]string, code []byte)
 
 	// and make sure the string is inside an interesting block. Keep walking upwards in AST
 	// for nested code scenarios.
-	for !slices.Contains(relevantParentTypes, parent.Kind()) {
+	for {
+		if _, exists := relevantParentTypes[parent.Kind()]; exists {
+			break
+		}
 		parent = parent.Parent()
 		if parent == nil {
 			return
@@ -138,14 +140,12 @@ func processStringNode(node *tree_sitter.Node, foundUrls *[]string, code []byte)
 
 	// trim all surrounding delimitator elements found in both string and template_string parents.
 	node_string := strings.Trim(node.Utf8Text(code), `"\()'`)
-	node_string = strings.Trim(node.Utf8Text(code), "`")
+	node_string = strings.Trim(node_string, "`")
 
-	if node_string == "" {
-		return
+	if node_string != "" {
+		// grow the found urls slice
+		*foundUrls = append(*foundUrls, node_string)
 	}
-
-	// grow the found urls slice
-	*foundUrls = append(*foundUrls, node_string)
 
 }
 
