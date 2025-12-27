@@ -18,7 +18,7 @@ func LoadConfig() *Config {
 		MaxPathDepth:           3,
 		AllowedExternalDomains: []string{"github.com", "bitbucket.com"},
 		SensitivePatterns:      []string{"internal", "secret", "private"},
-		AllowedExtensions:      []string{".js", ".html", ".htm", ".txt", ".py", ".php", ".git", ".json", ".yaml"},
+		AllowedExtensions:      []string{".js", ".html", "", ".xml", ".htm", ".txt", ".py", ".php", ".git", ".json", ".yaml"},
 		Workers:                5,
 	}
 
