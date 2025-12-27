@@ -10,7 +10,7 @@ import (
 	tls_client "github.com/bogdanfinn/tls-client"
 	"github.com/gomills/gofocusedcrawler/internal/config"
 	"github.com/gomills/gofocusedcrawler/pkg/queue"
-	urls_extr "github.com/gomills/gofocusedcrawler/pkg/urls_extractors"
+	urls_extr "github.com/gomills/gofocusedcrawler/pkg/urlextractors"
 	"github.com/gomills/gofocusedcrawler/pkg/utils"
 )
 

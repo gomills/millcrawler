@@ -1,4 +1,4 @@
-package urls_extractors
+package urlsextractors
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	http "github.com/bogdanfinn/fhttp"
 	"github.com/gomills/gofocusedcrawler/internal/config"
 	"github.com/gomills/gofocusedcrawler/pkg/queue"
-	"github.com/gomills/gofocusedcrawler/pkg/url_validator"
+	"github.com/gomills/gofocusedcrawler/pkg/urlvalidator"
 	tree_sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_javascript "github.com/tree-sitter/tree-sitter-javascript/bindings/go"
 )
@@ -16,14 +16,14 @@ import (
 // relevantParentTypes maps JavaScript AST node types (names according to Tree-Sitter) relevant for URL extraction. This is completely heuristic
 // https://github.com/tree-sitter/tree-sitter-javascript/blob/58404d8cf191d69f2674a8fd507bd5776f46cb11/grammar.js#L907
 var relevantParentTypes = map[string]struct{}{
-	"call_expression":      {},
-	"import_statement":     {},
+	"call_expression":       {},
+	"import_statement":      {},
 	"assignment_expression": {},
-	"variable_declarator":  {},
-	"pair":                 {},
-	"assignment_pattern":   {},
-	"arguments":            {},
-	"binary_expression":    {},
+	"variable_declarator":   {},
+	"pair":                  {},
+	"assignment_pattern":    {},
+	"arguments":             {},
+	"binary_expression":     {},
 	// gpt
 	"return_statement":     {},
 	"export_statement":     {},
@@ -64,7 +64,7 @@ func CrawlJs(ctx context.Context, config *config.Config, response *http.Response
 	traverseLoop(cursor, &foundUrls, code)
 
 	for _, parsedUrl := range foundUrls {
-		parsedUrl, err := url_validator.ValidateStringForUrl(config, parsedUrl, domain, registeredDomain)
+		parsedUrl, err := urlvalidator.ValidateStringForUrl(config, parsedUrl, domain, registeredDomain)
 		if err == nil {
 			qp.AddUrl(ctx, parsedUrl)
 		}

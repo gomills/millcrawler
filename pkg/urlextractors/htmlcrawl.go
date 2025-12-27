@@ -1,4 +1,4 @@
-package urls_extractors
+package urlsextractors
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	http "github.com/bogdanfinn/fhttp"
 	"github.com/gomills/gofocusedcrawler/internal/config"
 	"github.com/gomills/gofocusedcrawler/pkg/queue"
-	"github.com/gomills/gofocusedcrawler/pkg/url_validator"
+	"github.com/gomills/gofocusedcrawler/pkg/urlvalidator"
 	"golang.org/x/net/html"
 )
 
@@ -99,7 +99,7 @@ func processComplexElements(ctx context.Context, config *config.Config, n *html.
 				} else {
 
 					// otherwise, validate the URL directly
-					parsedUrl, err := url_validator.ValidateStringForUrl(config, att.Val, domain, registeredDomain)
+					parsedUrl, err := urlvalidator.ValidateStringForUrl(config, att.Val, domain, registeredDomain)
 					if err == nil {
 						q.AddUrl(ctx, parsedUrl)
 					}
@@ -123,7 +123,7 @@ func processOtherElements(ctx context.Context, config *config.Config, n *html.No
 			if attrKey == att.Key {
 
 				// validate and add the URL if valid
-				parsedUrl, err := url_validator.ValidateStringForUrl(config, att.Val, domain, registeredDomain)
+				parsedUrl, err := urlvalidator.ValidateStringForUrl(config, att.Val, domain, registeredDomain)
 				if err == nil {
 					q.AddUrl(ctx, parsedUrl)
 				}
@@ -145,7 +145,7 @@ func regexTextForUrls(ctx context.Context, config *config.Config, text string, q
 
 		for _, match := range matches {
 
-			parsedUrl, err := url_validator.ValidateStringForUrl(config, match, domain, registeredDomain)
+			parsedUrl, err := urlvalidator.ValidateStringForUrl(config, match, domain, registeredDomain)
 			if err == nil {
 				q.AddUrl(ctx, parsedUrl)
 			}

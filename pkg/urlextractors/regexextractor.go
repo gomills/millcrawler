@@ -1,4 +1,4 @@
-package urls_extractors
+package urlsextractors
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	http "github.com/bogdanfinn/fhttp"
 	"github.com/gomills/gofocusedcrawler/internal/config"
 	"github.com/gomills/gofocusedcrawler/pkg/queue"
-	"github.com/gomills/gofocusedcrawler/pkg/url_validator"
+	"github.com/gomills/gofocusedcrawler/pkg/urlvalidator"
 )
 
 var AbsoluteUrlPattern = regexp.MustCompile(`//[a-zA-Z0-9.-]+(?:/[^\s.,:"')]*)?`)
@@ -33,7 +33,7 @@ func processUrlsMatches(ctx context.Context, config *config.Config, matches [][]
 
 		stringMatch := string(match)
 
-		parsedUrl, err := url_validator.ValidateStringForUrl(config, stringMatch, domain, registeredDomain)
+		parsedUrl, err := urlvalidator.ValidateStringForUrl(config, stringMatch, domain, registeredDomain)
 		if err == nil {
 			qp.AddUrl(ctx, parsedUrl)
 		}

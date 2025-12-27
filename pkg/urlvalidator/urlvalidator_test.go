@@ -1,4 +1,4 @@
-package url_validator
+package urlvalidator
 
 import (
 	"testing"
