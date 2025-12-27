@@ -20,13 +20,10 @@ func main() {
 	domainStr := strings.TrimSpace(*domain)
 
 	// Load configuration
-	config, err := config.LoadConfig("path/to/your/config_example.json")
-	if err != nil {
-		log.Fatal(err)
-	}
+	config := config.LoadConfig()
 
 	log.Printf("Start crawling %s\n\n", domainStr)
 
-	crawler.StartCrawling(domainStr, config)
+	crawler.Crawl(domainStr, config)
 
 }
