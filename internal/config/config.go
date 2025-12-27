@@ -3,7 +3,6 @@ package config
 // Config holds the crawler configuration: parameters, heuristics, etc
 type Config struct {
 	TimeOutDuration        int
-	CustomUserAgent        string
 	AllowedExternalDomains []string
 	MaxPathDepth           int
 	SensitivePatterns      []string
@@ -16,7 +15,6 @@ func LoadConfig() *Config {
 
 	return &Config{
 		TimeOutDuration:        90,
-		CustomUserAgent:        "Google Bot",
 		MaxPathDepth:           3,
 		AllowedExternalDomains: []string{"github.com", "bitbucket.com"},
 		SensitivePatterns:      []string{"internal", "secret", "private"},

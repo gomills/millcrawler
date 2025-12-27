@@ -21,7 +21,10 @@ General TODOS
 
 - Take a look at more status codes for bot blocking DONE?
 
-- Optimize
+- Optimize: 
+    1. use map lookup in processComplexElements and processOtherElements (not worth it)
+    2. use mapping in relevantParentTypes in .js DONE
+    4. fix robots parsing because it assums just 1 : 
 
 - Improve external url handling. DONE
 

@@ -9,7 +9,6 @@ import (
 var (
 	testConfig = &config.Config{
 		TimeOutDuration:        60,
-		CustomUserAgent:        "Test",
 		MaxPathDepth:           1,
 		AllowedExternalDomains: []string{"github.com"},
 		SensitivePatterns:      []string{"dashboard", "test", "repo", "private"},

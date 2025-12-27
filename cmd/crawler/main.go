@@ -11,18 +11,19 @@ import (
 
 func main() {
 
-	domain := flag.String("domain", "", "domain to crawl (e.g. example.com or https://example.com)")
+	domain := flag.String("domain", "", "domain to crawl (e.g. example.com www.example.com)")
 
-	flag.Parse() // Parse CLI flags before using them
+	flag.Parse()
 	if domain == nil || *domain == "" {
-		log.Fatalln("A domain is necessary to call gofocusedcrawler!")
+		log.Fatalln("need_valid_domain")
 	}
+
 	domainStr := strings.TrimSpace(*domain)
 
-	// Load configuration
+	// load configuration
 	config := config.LoadConfig()
 
-	log.Printf("Start crawling %s\n\n", domainStr)
+	log.Printf(">>> Start crawling %s\n\n", domainStr)
 
 	crawler.Crawl(domainStr, config)
 
