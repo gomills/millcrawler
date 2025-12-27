@@ -20,6 +20,10 @@ var (
 // validateLocalUrl takes a local url and checks if it passes heuristics to be valid
 func validateLocalUrl(config *config.Config, parsedUrl *url.URL, domain string, registeredDomain string) (*url.URL, error) {
 
+	if parsedUrl == nil {
+		return nil, fmt.Errorf("parsed_url_is_nil")
+	}
+
 	// get its extension and perform the check according to it (scripts, subpages or others .txt etc)
 	urlExt := filepath.Ext(parsedUrl.Path)
 
@@ -52,6 +56,10 @@ func validateLocalUrl(config *config.Config, parsedUrl *url.URL, domain string, 
 
 // validateSubpage validates subpages, which are .html files.
 func validateSubpage(config *config.Config, parsedUrl *url.URL) (*url.URL, error) {
+
+	if parsedUrl == nil {
+		return nil, fmt.Errorf("parsed_url_is_nil")
+	}
 
 	// 1. get its path depth
 	urlPathDepth := getPathDepth(parsedUrl.Path)
@@ -101,6 +109,10 @@ func hasSensitivePattern(config *config.Config, urlPath string) bool {
 // of this check is that we regex here the url path to avoid working with whole javascript files of these
 // common libraries in the future
 func validateJs(parsedUrl *url.URL) (*url.URL, error) {
+
+	if parsedUrl == nil {
+		return nil, fmt.Errorf("parsed_url_is_nil")
+	}
 
 	if IsPathCommonJSLibraryFile(parsedUrl.Path) {
 		return nil, fmt.Errorf("common_js_library")
