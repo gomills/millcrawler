@@ -103,3 +103,15 @@ func (q *Queue) TakeUrl(ctx context.Context) *url.URL {
 func (q *Queue) GetNCrawledUrls() int {
 	return len(q.foundUrlsSet)
 }
+
+// get all found URLs as a slice
+func (q *Queue) GetFoundUrls() []string {
+	q.mu.Lock()
+	defer q.mu.Unlock()
+
+	urls := make([]string, 0, len(q.foundUrlsSet))
+	for url := range q.foundUrlsSet {
+		urls = append(urls, url)
+	}
+	return urls
+}

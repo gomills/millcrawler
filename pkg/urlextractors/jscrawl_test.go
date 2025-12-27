@@ -33,6 +33,16 @@ type jsTestCase struct {
 	expectedCount int
 }
 
+// These are the tested parent types as of now:
+// call_expression
+// import_statement
+// assignment_expression
+// variable_declarator
+// pair
+// assignment_pattern
+// arguments
+// binary_expression
+
 func runJsTest(t *testing.T, tc jsTestCase) {
 	ctx := context.Background()
 	q := queue.NewQueue(1)

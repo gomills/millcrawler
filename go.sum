@@ -28,6 +28,8 @@ github.com/tam7t/hpkp v0.0.0-20160821193359-2b70b4024ed5 h1:YqAladjX7xpA6BM04leX
 github.com/tam7t/hpkp v0.0.0-20160821193359-2b70b4024ed5/go.mod h1:2JjD2zLQYH5HO74y5+aE3remJQvl6q4Sn6aWA2wD1Ng=
 github.com/tree-sitter/go-tree-sitter v0.24.0 h1:kRZb6aBNfcI/u0Qh8XEt3zjNVnmxTisDBN+kXK0xRYQ=
 github.com/tree-sitter/go-tree-sitter v0.24.0/go.mod h1:x681iFVoLMEwOSIHA1chaLkXlroXEN7WY+VHGFaoDbk=
+github.com/tree-sitter/go-tree-sitter v0.25.0 h1:sx6kcg8raRFCvc9BnXglke6axya12krCJF5xJ2sftRU=
+github.com/tree-sitter/go-tree-sitter v0.25.0/go.mod h1:r77ig7BikoZhHrrsjAnv8RqGti5rtSyvDHPzgTPsUuU=
 github.com/tree-sitter/tree-sitter-c v0.21.5-0.20240818205408-927da1f210eb h1:A8425heRM8mylnv4H58FPUiH+aYivyitre0PzxrfmWs=
 github.com/tree-sitter/tree-sitter-c v0.21.5-0.20240818205408-927da1f210eb/go.mod h1:dOF6gtQiF9UwNh995T5OphYmtIypkjsp3ap7r9AN/iA=
 github.com/tree-sitter/tree-sitter-cpp v0.22.4-0.20240818224355-b1a4e2b25148 h1:AfFPZwtwGN01BW1jDdqBVqscTwetvMpydqYZz57RSlc=
