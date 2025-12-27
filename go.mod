@@ -4,15 +4,17 @@ go 1.24.1
 
 toolchain go1.24.11
 
-require golang.org/x/net v0.48.0
+require (
+	github.com/bogdanfinn/fhttp v0.6.4
+	github.com/bogdanfinn/tls-client v1.12.0
+	golang.org/x/net v0.48.0
+)
 
 require (
 	github.com/andybalholm/brotli v1.2.0 // indirect
 	github.com/bdandy/go-errors v1.2.2 // indirect
 	github.com/bdandy/go-socks4 v1.2.3 // indirect
-	github.com/bogdanfinn/fhttp v0.6.4 // indirect
 	github.com/bogdanfinn/quic-go-utls v1.0.5-utls // indirect
-	github.com/bogdanfinn/tls-client v1.12.0 // indirect
 	github.com/bogdanfinn/utls v1.7.5-barnius // indirect
 	github.com/klauspost/compress v1.18.2 // indirect
 	github.com/quic-go/qpack v0.6.0 // indirect
@@ -23,7 +25,6 @@ require (
 )
 
 require (
-	github.com/google/uuid v1.6.0
 	github.com/mattn/go-pointer v0.0.1 // indirect
 	github.com/tree-sitter/go-tree-sitter v0.25.0
 	github.com/tree-sitter/tree-sitter-javascript v0.25.0

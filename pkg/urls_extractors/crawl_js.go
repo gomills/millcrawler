@@ -2,9 +2,11 @@ package urls_extractors
 
 import (
 	"context"
+	"io"
 	"slices"
 	"strings"
 
+	http "github.com/bogdanfinn/fhttp"
 	"github.com/gomills/gofocusedcrawler/internal/config"
 	"github.com/gomills/gofocusedcrawler/pkg/queue"
 	"github.com/gomills/gofocusedcrawler/pkg/url_validator"
@@ -34,7 +36,12 @@ var relevantParentTypes = []string{
 }
 
 // CrawlJs parses JavaScript code, extracts possible URLs, validates them, and adds them to the queue.
-func CrawlJs(ctx context.Context, config *config.Config, code []byte, qp *queue.Queue, domain string, registeredDomain string) {
+func CrawlJs(ctx context.Context, config *config.Config, response *http.Response, qp *queue.Queue, domain string, registeredDomain string) {
+
+	code, err := io.ReadAll(response.Body)
+	if err != nil {
+		return
+	}
 
 	foundUrls := []string{}
 

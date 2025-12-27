@@ -3,7 +3,6 @@ package crawler
 import (
 	"context"
 	"fmt"
-	"io"
 	"net/url"
 	"path/filepath"
 
@@ -63,7 +62,7 @@ func crawlUrl(ctx context.Context, client tls_client.HttpClient, headers http.He
 		urls_extr.CrawlHtml(ctx, config, response, qp, domain, registeredDomain)
 
 	case ".js", ".min.js":
-		CrawlJavascript(ctx, config, response, qp, domain, registeredDomain)
+		urls_extr.CrawlJs(ctx, config, response, qp, domain, registeredDomain)
 
 	case ".txt":
 		urls_extr.CrawlTxt(ctx, config, url, response, qp, domain, registeredDomain)
@@ -77,13 +76,4 @@ func crawlUrl(ctx context.Context, client tls_client.HttpClient, headers http.He
 
 	return nil
 
-}
-
-// This function is here because the linter just won't find it when I move it to another file!
-func CrawlJavascript(ctx context.Context, config *config.Config, response *http.Response, qp *queue.Queue, domain string, registeredDomain string) {
-	jsCodeByte, err := io.ReadAll(response.Body)
-	if err != nil {
-		return
-	}
-	urls_extr.CrawlJs(ctx, config, jsCodeByte, qp, domain, registeredDomain)
 }
