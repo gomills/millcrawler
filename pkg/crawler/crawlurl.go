@@ -24,7 +24,10 @@ func crawlUrl(ctx context.Context, client tls_client.HttpClient, headers http.He
 	}
 
 	// craft request with context
-	request, _ := http.NewRequestWithContext(ctx, "GET", url.String(), nil)
+	request, err := http.NewRequestWithContext(ctx, "GET", url.String(), nil)
+	if err != nil {
+		return nil
+	}
 	request.Header = headers
 
 	// send it

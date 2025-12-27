@@ -48,7 +48,9 @@ func Crawl(domain string, config *config.Config) *CrawlingOutcome {
 	//	- first 429 status code of any worker
 	timeOutDuration := time.Duration(config.TimeOutDuration) * time.Second
 
-	ctx, _ := context.WithTimeout(context.Background(), timeOutDuration)
+	ctx, cancel := context.WithTimeout(context.Background(), timeOutDuration)
+	defer cancel()
+
 	g, ctx := errgroup.WithContext(ctx)
 
 	// 4. seed the queue
@@ -68,9 +70,7 @@ func Crawl(domain string, config *config.Config) *CrawlingOutcome {
 	}
 
 	// 6. await the error group cancellation
-	if err := g.Wait(); err != nil {
-		fmt.Println("stop_reason:", err)
-	}
+	err = g.Wait()
 
 	s_crawling := time.Since(start).Seconds()
 
