@@ -2,10 +2,10 @@ package urls_extractors
 
 import (
 	"context"
-	"net/http"
 	"net/url"
 	"strings"
 
+	http "github.com/bogdanfinn/fhttp"
 	"github.com/gomills/gofocusedcrawler/internal/config"
 	"github.com/gomills/gofocusedcrawler/pkg/queue"
 )

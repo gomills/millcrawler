@@ -4,10 +4,11 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"net/http"
 	"net/url"
 	"path/filepath"
 
+	http "github.com/bogdanfinn/fhttp"
+	tls_client "github.com/bogdanfinn/tls-client"
 	"github.com/gomills/gofocusedcrawler/internal/config"
 	"github.com/gomills/gofocusedcrawler/pkg/queue"
 	urls_extr "github.com/gomills/gofocusedcrawler/pkg/urls_extractors"
@@ -15,7 +16,7 @@ import (
 )
 
 // crawlUrl returns error only on 429 status_code hit
-func crawlUrl(ctx context.Context, config *config.Config, url *url.URL, qp *queue.Queue, domain string, registeredDomain string) error {
+func crawlUrl(ctx context.Context, client tls_client.HttpClient, headers http.Header, config *config.Config, url *url.URL, qp *queue.Queue, domain string, registeredDomain string) error {
 
 	// skip crawling urls from external domains
 	isLocal, err := utils.IsLocalUrl(url, registeredDomain)
@@ -25,10 +26,10 @@ func crawlUrl(ctx context.Context, config *config.Config, url *url.URL, qp *queu
 
 	// craft request with context
 	request, _ := http.NewRequestWithContext(ctx, "GET", url.String(), nil)
-	request.Header.Set("User-Agent", config.CustomUserAgent)
+	request.Header = headers
 
 	// send it
-	response, err := http.DefaultClient.Do(request)
+	response, err := client.Do(request)
 	if err != nil {
 		// log.Printf("%s failed request for %s", id, url.String())
 		return nil

@@ -13,13 +13,13 @@ General TODOS
     
     - HTTPs responses: headers for [debugging endpoints] and error payloads.
 
-- Stealthness: 
+- Stealthness:  DONE
     - TLS fingerprinting: https://github.com/refraction-networking/utls
     - CloudFare: we'll model cloudfare with TLS fingerprinting as well.
 
 - Improve outcome: to improve predictability we should store in a dataframe: URLs crawled, time spent, reason for stop (in code format: timeout, anti_bot, etc.). DONE
 
-- Take a look at more status codes for bot blocking
+- Take a look at more status codes for bot blocking DONE?
 
 - Optimize
 

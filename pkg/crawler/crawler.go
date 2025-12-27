@@ -6,6 +6,8 @@ import (
 	"log"
 	"time"
 
+	http "github.com/bogdanfinn/fhttp"
+	tls_client "github.com/bogdanfinn/tls-client"
 	"github.com/gomills/gofocusedcrawler/internal/config"
 	"github.com/gomills/gofocusedcrawler/pkg/queue"
 	"github.com/gomills/gofocusedcrawler/pkg/utils"
@@ -21,6 +23,13 @@ func Crawl(domain string, config *config.Config) *CrawlingOutcome {
 	if err != nil {
 		log.Print(err)
 		return GetCrawlingOutcome(domain, 0, 0, "reg_domain_failed")
+	}
+
+	// 0.1 get client and headers
+	client, headers, err := getStealthHttps()
+	if err != nil {
+		log.Print(err)
+		return GetCrawlingOutcome(domain, 0, 0, err.Error())
 	}
 
 	// 1. get seed urls, which are brute forced url paths and subdomains
@@ -53,7 +62,7 @@ func Crawl(domain string, config *config.Config) *CrawlingOutcome {
 	for range config.Workers {
 
 		g.Go(func() error {
-			return worker(qp, ctx, config, domain, registeredDomain)
+			return worker(qp, ctx, client, headers, config, domain, registeredDomain)
 		})
 
 	}
@@ -71,7 +80,7 @@ func Crawl(domain string, config *config.Config) *CrawlingOutcome {
 
 // worker is a consumer&producer of the urls queue.
 // It returns error for: empty queue, timeout or a single 429 status code
-func worker(qp *queue.Queue, ctx context.Context, config *config.Config, domain string, registeredDomain string) error {
+func worker(qp *queue.Queue, ctx context.Context, client tls_client.HttpClient, headers http.Header, config *config.Config, domain string, registeredDomain string) error {
 
 	for {
 
@@ -84,7 +93,7 @@ func worker(qp *queue.Queue, ctx context.Context, config *config.Config, domain 
 		log.Println(url.String())
 
 		// 2. crawl it. Error is only for 429 status code hit.
-		err := crawlUrl(ctx, config, url, qp, domain, registeredDomain)
+		err := crawlUrl(ctx, client, headers, config, url, qp, domain, registeredDomain)
 		if err != nil {
 			return err
 		}

@@ -3,9 +3,9 @@ package urls_extractors
 import (
 	"context"
 	"io"
-	"net/http"
 	"regexp"
 
+	http "github.com/bogdanfinn/fhttp"
 	"github.com/gomills/gofocusedcrawler/internal/config"
 	"github.com/gomills/gofocusedcrawler/pkg/queue"
 	"github.com/gomills/gofocusedcrawler/pkg/url_validator"
