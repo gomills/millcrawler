@@ -11,7 +11,7 @@ import (
 	"github.com/gomills/gofocusedcrawler/pkg/urlvalidator"
 )
 
-var AbsoluteUrlPattern = regexp.MustCompile(`//[a-zA-Z0-9.-]+(?:/[^\s.,:"')]*(?:\.[^\s.,:"')]+)*/?)`)
+var AbsoluteUrlPattern = regexp.MustCompile(`//[a-zA-Z0-9.-]+(?:/[^\s.,:"')<]*(?:\.[^\s.,:"')<]+)*/?)`)
 
 // regexFileForUrls takes a raw response and regexes it for urls.
 func regexFileForUrls(ctx context.Context, config *config.Config, response *http.Response, qp *queue.Queue, domain string, registeredDomain string) {

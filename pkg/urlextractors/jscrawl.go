@@ -14,7 +14,7 @@ import (
 )
 
 // relevantParentTypes maps JavaScript AST node types (names according to Tree-Sitter) relevant for URL extraction. This is completely heuristic
-// https://github.com/tree-sitter/tree-sitter-javascript/blob/58404d8cf191d69f2674a8fd507bd5776f46cb11/grammar.js#L907
+// For more parent types, visit: https://github.com/tree-sitter/tree-sitter-javascript/blob/58404d8cf191d69f2674a8fd507bd5776f46cb11/grammar.js#L907
 var relevantParentTypes = map[string]struct{}{
 	"call_expression":       {},
 	"import_statement":      {},
