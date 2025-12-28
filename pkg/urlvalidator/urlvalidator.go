@@ -42,7 +42,7 @@ func ValidateStringForUrl(config *config.Config, possibleUrl string, domain stri
 // - no tabs-whitespaces
 // - no 'mailto:'
 func initialCheck(possibleUrl string) error {
-	if possibleUrl == "" || len([]rune(possibleUrl)) < 3 || len(possibleUrl) > 600 {
+	if possibleUrl == "" || len([]rune(possibleUrl)) < 3 || len(possibleUrl) >= 600 {
 		return fmt.Errorf("invalid_length")
 	} else if strings.Contains(possibleUrl, " ") || strings.Contains(possibleUrl, "\n") || strings.HasPrefix(possibleUrl, "mailto") {
 		return fmt.Errorf("possibly_not_url")

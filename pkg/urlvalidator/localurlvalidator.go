@@ -73,7 +73,7 @@ func validateSubpage(config *config.Config, parsedUrl *url.URL) (*url.URL, error
 		return parsedUrl, nil
 	}
 
-	return nil, fmt.Errorf("Too deep without sensitive patterns")
+	return nil, fmt.Errorf("deep_without_sensitive_patt")
 }
 
 // getPathDepth calculates path depth of a subpage (e.g: 2 for example.com/path1/path2)
