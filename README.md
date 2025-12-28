@@ -14,7 +14,7 @@ General TODOS
     - HTTPs responses: headers for [debugging endpoints] and error payloads. headers, maybe just check  each for https prefix? STILL NOT IMPLEMENTED
 
 - Stealthness:  DONE
-    - TLS fingerprinting: https://github.com/refraction-networking/utls
+    - TLS fingerprinting: https://github.com/refraction-networking/utls (https://bogdanfinn.gitbook.io/open-source-oasis/tls-client)
     - CloudFare: we'll model cloudfare with TLS fingerprinting as well.
 
 - Improve outcome: to improve predictability we should store in a dataframe: URLs crawled, time spent, reason for stop (in code format: timeout, anti_bot, etc.). DONE
