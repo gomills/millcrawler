@@ -1,38 +1,47 @@
 # Stealth refactor
 
-General TODOS
+This codebase has been updated with:
 
+- testing files for most of packages coverage
+- fixed issues and bugs
+- improved documentation with README.md's on each package and inline comments
+- improved predictability, now the crawler outputs some results
+- simplified url extraction, now they only come from .js, .html, robots.txt, sitemap.xml and error payloads
 
-- URLs must come from, and only from:
+## What GOFOCUSEDCRAWLER brings new to the table:
 
-    - .js: improve AST parent types. DONE
+- **Intuitive, granular control**  
+  Through config, the crawler is controlled by these parameters:
+  ```go
+  TimeOutDuration
+  AllowedExternalDomains
+  MaxPathDepth
+  SensitivePatterns
+  AllowedExtensions
+  Workers
+  ```
 
-    - .html: same as with .js. DONE
+- **Tree-Sitter parsing for `.js`.**  
+  Fast, lightweight, yet precise parsing allows selective extraction of URLs from JavaScript files. It won’t miss them as long as they are within the heuristics. Thorough parsing is especially important because most sensitive endpoints are found in JavaScript.
 
-    - other scripts: ignore all except robots.txt and sitemap.yaml DONE
-    
-    - HTTPs responses: headers for [debugging endpoints] and error payloads. headers, maybe just check  each for https prefix? STILL NOT IMPLEMENTED
+- **Extensive URL extraction from HTML.**  
+  Not limited to a `"follow a[href]"` algorithm. Like `.js` files, heuristics were extended to avoid missing important URLs. Elements and attributes were carefully selected.
 
-- Stealthness:  DONE
-    - TLS fingerprinting: https://github.com/refraction-networking/utls (https://bogdanfinn.gitbook.io/open-source-oasis/tls-client)
-    - CloudFare: we'll model cloudfare with TLS fingerprinting as well.
+- **Smart, custom URL validation heuristics.**  
+  Beyond extraction, URLs are validated per the user's config:  
+  - Accept URLs with allowed file extensions.  
+  - Accept subpages (`.htm`, `.html`, or no extension`) only if the path depth is within limits (bypassed by sensitive patterns).  
+  - Same logic applies to **any and all subdomains**.  
+  - External URLs are kept only if they match allowed domains (e.g., `github.com`), but they won’t be crawled.
 
-- Improve outcome: to improve predictability we should store in a dataframe: URLs crawled, time spent, reason for stop (in code format: timeout, anti_bot, etc.). DONE
+- **Exits on first 429 status code.**  
+  Once flagged by a server, further requests are usually futile.
 
-- Take a look at more status codes for bot blocking DONE?
+- **Bruteforces certain URLs**, such as `sitemap` and some subdomains like `dev.` or `staging.`
 
-- Optimize: 
-    1. use map lookup in processComplexElements and processOtherElements (not worth it)
-    2. use mapping in relevantParentTypes in .js DONE
-    4. fix robots parsing because it assums just 1 : DONE
+- **URL regexing on error payloads** for debugging sensitive endpoint leaks. This could be further expanded with headers in the future.
 
-- Improve external url handling. DONE
+- **Fully synchronized goroutines.** Once a stop signal is fired, all close automatically thorugh shared context immediately, and no further requests proceed. 
 
-- Stop signals should only be: 429 / timeout DONE
-
-Side quests TODOS for refactoring:
-
-- Simplify config, just accept .json. DONE
-- Discriminate the /crawler file. Separate into crawl_urls and crawler DONE
-- Merge urlextraction with the corresponding crawl_urls DONE
-- Deprecate kw_interrupt_signal DONE
+- **Fully modularized, encapsulated codebase.**  
+  Well documented, intuitive, easily modifiable and refactorable, and can be deployed in distributed architectures with minor changes.
