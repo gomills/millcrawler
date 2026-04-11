@@ -5,7 +5,7 @@ This codebase has been updated with:
 - testing files for most of packages coverage
 - fixed issues and bugs
 - improved documentation with README.md's on each package and inline comments
-- improved predictability, now the crawler outputs some results
+- improved predictability, now the crawler outputs same results in a structured fashion
 - simplified url extraction, now they only come from .js, .html, robots.txt, sitemap.xml and error payloads
 
 ## What GOFOCUSEDCRAWLER brings new to the table:
