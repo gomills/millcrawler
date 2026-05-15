@@ -9,8 +9,8 @@ import (
 	"time"
 
 	http "github.com/bogdanfinn/fhttp"
-	"github.com/gomills/gofocusedcrawler/internal/config"
-	"github.com/gomills/gofocusedcrawler/pkg/queue"
+	"github.com/gomills/millcrawler/pkg/config"
+	"github.com/gomills/millcrawler/pkg/queue"
 )
 
 var jsTestConfig = &config.Config{
@@ -51,12 +51,12 @@ func runJsTest(t *testing.T, tc jsTestCase) {
 		Body: io.NopCloser(strings.NewReader(tc.jsCode)),
 	}
 
-	initialCount := q.GetNCrawledUrls()
-	CrawlJs(ctx, jsTestConfig, response, q, jsDomain, jsRegisteredDomain)
+	initialCount := q.GetNFoundUrls()
+	CrawlJs(ctx, jsTestConfig, response.Body, q, jsDomain, jsRegisteredDomain)
 
 	time.Sleep(10 * time.Millisecond)
 
-	finalCount := q.GetNCrawledUrls()
+	finalCount := q.GetNFoundUrls()
 	extractedCount := finalCount - initialCount
 
 	if extractedCount != tc.expectedCount {
@@ -160,7 +160,7 @@ const fullUrl = 'https://example.com/se66' + '/2api';
 		Body: io.NopCloser(strings.NewReader(jsCode)),
 	}
 
-	CrawlJs(ctx, jsTestConfig, response, q, jsDomain, jsRegisteredDomain)
+	CrawlJs(ctx, jsTestConfig, response.Body, q, jsDomain, jsRegisteredDomain)
 	time.Sleep(10 * time.Millisecond)
 
 	extractedUrls := q.GetFoundUrls()

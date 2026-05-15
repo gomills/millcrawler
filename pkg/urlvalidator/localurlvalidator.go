@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/gomills/gofocusedcrawler/internal/config"
+	"github.com/gomills/millcrawler/pkg/config"
 )
 
 var (
@@ -17,11 +17,11 @@ var (
 	commonJSLibFilesCompReg  = regexp.MustCompile(CommonJSLibraryFileRegex)
 )
 
-// validateLocalUrl takes a local url and checks if it passes heuristics to be valid
+// validateLocalUrl takes a local url and checks if it passes heuristics to be valid according to the crawler config
 func validateLocalUrl(config *config.Config, parsedUrl *url.URL, domain string, registeredDomain string) (*url.URL, error) {
 
 	if parsedUrl == nil {
-		return nil, fmt.Errorf("parsed_url_is_nil")
+		return nil, fmt.Errorf("parsed url is nil")
 	}
 
 	// get its extension and perform the check according to it (scripts, subpages or others .txt etc)
@@ -33,7 +33,7 @@ func validateLocalUrl(config *config.Config, parsedUrl *url.URL, domain string, 
 
 			switch allwdExt {
 
-			// these extensions belong to subpages, fetching .html pages
+			// these extensions belong to subpages which are html
 			case "", ".htm", ".html":
 				return validateSubpage(config, parsedUrl)
 
@@ -41,7 +41,7 @@ func validateLocalUrl(config *config.Config, parsedUrl *url.URL, domain string, 
 			case ".js":
 				return validateJs(parsedUrl)
 
-			// here fall .yaml, .txt, .map, etc
+			// here fall .yaml, .txt, .map, etc. Validated directly.
 			default:
 				return parsedUrl, nil
 
@@ -51,14 +51,14 @@ func validateLocalUrl(config *config.Config, parsedUrl *url.URL, domain string, 
 	}
 
 	// if it wasn't found, it wasn't in the allowed extensions list (.png, .svg, etc)
-	return nil, fmt.Errorf("url_no_allowed_extension")
+	return nil, fmt.Errorf("url doesn't have allowed extension")
 }
 
 // validateSubpage validates subpages, which are .html files.
 func validateSubpage(config *config.Config, parsedUrl *url.URL) (*url.URL, error) {
 
 	if parsedUrl == nil {
-		return nil, fmt.Errorf("parsed_url_is_nil")
+		return nil, fmt.Errorf("parsed url is nil")
 	}
 
 	// 1. get its path depth
@@ -73,10 +73,10 @@ func validateSubpage(config *config.Config, parsedUrl *url.URL) (*url.URL, error
 		return parsedUrl, nil
 	}
 
-	return nil, fmt.Errorf("deep_without_sensitive_patt")
+	return nil, fmt.Errorf("url is deep without any sensitive pattern")
 }
 
-// getPathDepth calculates path depth of a subpage (e.g: 2 for example.com/path1/path2)
+// getPathDepth calculates path depth of a given path (e.g: 2 for /path1/path2)
 func getPathDepth(urlPath string) int {
 
 	// get rid of trailing slashes (e.g: path1/ -> path1)
@@ -105,17 +105,17 @@ func hasSensitivePattern(config *config.Config, urlPath string) bool {
 	return false
 }
 
-// validateJs checks that the .js file is not from a common library to avoid resources waste. The value
+// validateJs checks that the .js file is not from a common library to avoid parsing it and working with it. The value
 // of this check is that we regex here the url path to avoid working with whole javascript files of these
 // common libraries in the future
 func validateJs(parsedUrl *url.URL) (*url.URL, error) {
 
 	if parsedUrl == nil {
-		return nil, fmt.Errorf("parsed_url_is_nil")
+		return nil, fmt.Errorf("parsed url is nil")
 	}
 
 	if IsPathCommonJSLibraryFile(parsedUrl.Path) {
-		return nil, fmt.Errorf("common_js_library")
+		return nil, fmt.Errorf("url is a common js library")
 
 	} else {
 		return parsedUrl, nil

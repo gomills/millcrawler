@@ -10,8 +10,8 @@ import (
 	"time"
 
 	http "github.com/bogdanfinn/fhttp"
-	"github.com/gomills/gofocusedcrawler/internal/config"
-	"github.com/gomills/gofocusedcrawler/pkg/queue"
+	"github.com/gomills/millcrawler/pkg/config"
+	"github.com/gomills/millcrawler/pkg/queue"
 )
 
 var xmlTestConfig = &config.Config{
@@ -53,7 +53,7 @@ func TestCrawlXmlSitemapExtraction(t *testing.T) {
 		Body: io.NopCloser(strings.NewReader(sitemapContent)),
 	}
 
-	CrawlXml(ctx, xmlTestConfig, sitemapUrl, response, q, xmlDomain, xmlRegisteredDomain)
+	CrawlXml(ctx, xmlTestConfig, sitemapUrl, response.Body, q, xmlDomain, xmlRegisteredDomain)
 	time.Sleep(10 * time.Millisecond)
 
 	extractedUrls := q.GetFoundUrls()
@@ -96,11 +96,11 @@ func TestCrawlXmlNonSitemap(t *testing.T) {
 		Body: io.NopCloser(strings.NewReader(xmlContent)),
 	}
 
-	CrawlXml(ctx, xmlTestConfig, nonSitemapUrl, response, q, xmlDomain, xmlRegisteredDomain)
+	CrawlXml(ctx, xmlTestConfig, nonSitemapUrl, response.Body, q, xmlDomain, xmlRegisteredDomain)
 	time.Sleep(10 * time.Millisecond)
 
 	// Non-sitemap.xml files should not be processed
-	if count := q.GetNCrawledUrls(); count != 0 {
+	if count := q.GetNFoundUrls(); count != 0 {
 		t.Errorf("Expected 0 URLs from non-sitemap XML file, got %d", count)
 	}
 }

@@ -3,20 +3,18 @@ package urlsextractors
 import (
 	"context"
 	"io"
-	"log"
 	"net/url"
 	"strings"
 
-	http "github.com/bogdanfinn/fhttp"
-	"github.com/gomills/gofocusedcrawler/internal/config"
-	"github.com/gomills/gofocusedcrawler/pkg/queue"
+	"github.com/gomills/millcrawler/pkg/config"
+	"github.com/gomills/millcrawler/pkg/queue"
 )
 
 // CrawlTxtFileUrl parses robots.txt for urls.
-func CrawlTxt(ctx context.Context, config *config.Config, parsedUrl *url.URL, response *http.Response, qp *queue.Queue, domain string, registeredDomain string) {
+func CrawlTxt(ctx context.Context, config *config.Config, parsedUrl *url.URL, robotsFile io.ReadCloser, qp *queue.Queue, domain string, registeredDomain string) {
 
 	if strings.Contains(parsedUrl.Path, "robots.txt") {
-		crawlRobots(ctx, config, response, qp, domain, registeredDomain)
+		crawlRobots(ctx, config, robotsFile, qp, domain, registeredDomain)
 
 	} else {
 		// regexFileForUrls(ctx, config, response, qp, domain, registeredDomain)
@@ -24,10 +22,10 @@ func CrawlTxt(ctx context.Context, config *config.Config, parsedUrl *url.URL, re
 
 }
 
-func crawlRobots(ctx context.Context, config *config.Config, response *http.Response, qp *queue.Queue, domain string, registeredDomain string) {
-	bodyStr, err := io.ReadAll(response.Body)
+func crawlRobots(ctx context.Context, config *config.Config, robotsFile io.ReadCloser, qp *queue.Queue, domain string, registeredDomain string) {
+	bodyStr, err := io.ReadAll(robotsFile)
 	if err != nil {
-		log.Print("Failed to read robots.txt' body")
+		// log.Print("Failed to read robots.txt' body")
 		return
 	}
 

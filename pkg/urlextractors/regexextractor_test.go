@@ -9,8 +9,8 @@ import (
 	"time"
 
 	http "github.com/bogdanfinn/fhttp"
-	"github.com/gomills/gofocusedcrawler/internal/config"
-	"github.com/gomills/gofocusedcrawler/pkg/queue"
+	"github.com/gomills/millcrawler/pkg/config"
+	"github.com/gomills/millcrawler/pkg/queue"
 )
 
 var regexTestConfig = &config.Config{
@@ -66,7 +66,7 @@ and support at //github.com/support/issues.
 		Body: io.NopCloser(strings.NewReader(textContent)),
 	}
 
-	regexFileForUrls(ctx, regexTestConfig, response, q, regexDomain, regexRegisteredDomain)
+	regexFileForUrls(ctx, regexTestConfig, response.Body, q, regexDomain, regexRegisteredDomain)
 
 	time.Sleep(50 * time.Millisecond)
 

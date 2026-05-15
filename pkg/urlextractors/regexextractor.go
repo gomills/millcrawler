@@ -5,18 +5,17 @@ import (
 	"io"
 	"regexp"
 
-	http "github.com/bogdanfinn/fhttp"
-	"github.com/gomills/gofocusedcrawler/internal/config"
-	"github.com/gomills/gofocusedcrawler/pkg/queue"
-	"github.com/gomills/gofocusedcrawler/pkg/urlvalidator"
+	"github.com/gomills/millcrawler/pkg/config"
+	"github.com/gomills/millcrawler/pkg/queue"
+	"github.com/gomills/millcrawler/pkg/urlvalidator"
 )
 
 var AbsoluteUrlPattern = regexp.MustCompile(`//[a-zA-Z0-9.-]+(?:/[^\s.,:"')<]*(?:\.[^\s.,:"')<]+)*/?)`)
 
 // regexFileForUrls takes a raw response and regexes it for urls.
-func regexFileForUrls(ctx context.Context, config *config.Config, response *http.Response, qp *queue.Queue, domain string, registeredDomain string) {
+func regexFileForUrls(ctx context.Context, config *config.Config, responseBody io.ReadCloser, qp *queue.Queue, domain string, registeredDomain string) {
 
-	body, err := io.ReadAll(response.Body)
+	body, err := io.ReadAll(responseBody)
 	if err != nil {
 		return
 	}

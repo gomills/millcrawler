@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gomills/gofocusedcrawler/internal/config"
-	"github.com/gomills/gofocusedcrawler/pkg/queue"
+	"github.com/gomills/millcrawler/pkg/config"
+	"github.com/gomills/millcrawler/pkg/queue"
 )
 
 var robotsTestConfig = &config.Config{

@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"slices"
 
-	"github.com/gomills/gofocusedcrawler/internal/config"
+	"github.com/gomills/millcrawler/pkg/config"
 )
 
 // validateExternalUrl checks if external url's domain is in the allowed domains from config
@@ -13,5 +13,5 @@ func validateExternalUrl(config *config.Config, parsedUrl *url.URL) (*url.URL, e
 	if slices.Contains(config.AllowedExternalDomains, parsedUrl.Hostname()) {
 		return parsedUrl, nil
 	}
-	return nil, fmt.Errorf("external_not_interesting")
+	return nil, fmt.Errorf("external url doesn't come from any allowed external domain")
 }

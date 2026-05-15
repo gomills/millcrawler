@@ -8,8 +8,8 @@ import (
 	"time"
 
 	http "github.com/bogdanfinn/fhttp"
-	"github.com/gomills/gofocusedcrawler/internal/config"
-	"github.com/gomills/gofocusedcrawler/pkg/queue"
+	"github.com/gomills/millcrawler/pkg/config"
+	"github.com/gomills/millcrawler/pkg/queue"
 	"golang.org/x/net/html"
 )
 
@@ -39,7 +39,7 @@ func TestRegexTextForUrls(t *testing.T) {
 	regexTextForUrls(ctx, testConfig, text, q, domain, registeredDomain)
 
 	// Verify that the URL was extracted and added to the queue
-	finalCount := q.GetNCrawledUrls()
+	finalCount := q.GetNFoundUrls()
 	if finalCount != expected {
 		t.Errorf("Expected URL to be added to queue, got expected: %d, final: %d", expected, finalCount)
 	}
@@ -60,7 +60,7 @@ func TestExtractUrlsFromHtmlComment(t *testing.T) {
 	expected := 1
 	extractUrlsFromHtmlComment(ctx, testConfig, commentNode, q, domain, registeredDomain)
 
-	finalCount := q.GetNCrawledUrls()
+	finalCount := q.GetNFoundUrls()
 	if finalCount != expected {
 		t.Errorf("Expected URL to be added to queue from comment, got expected: %d, final: %d", expected, finalCount)
 	}
@@ -88,7 +88,7 @@ func TestProcessOtherElements(t *testing.T) {
 	expected := 1
 	processOtherElements(ctx, testConfig, linkNode, q, intrsAttrKeys, domain, registeredDomain)
 
-	finalCount := q.GetNCrawledUrls()
+	finalCount := q.GetNFoundUrls()
 	if finalCount != expected {
 		t.Errorf("Expected URL to be added to queue from element, got expected: %d, final: %d", expected, finalCount)
 	}
@@ -105,7 +105,7 @@ func TestRegexTextForUrlsMultipleMatches(t *testing.T) {
 	expected := 2
 	regexTextForUrls(ctx, testConfig, text, q, domain, registeredDomain)
 
-	finalCount := q.GetNCrawledUrls()
+	finalCount := q.GetNFoundUrls()
 	if finalCount != expected {
 		t.Errorf("Expected URLs to be added to queue, got expected: %d, final: %d", expected, finalCount)
 	}
@@ -125,7 +125,7 @@ func TestExtractUrlsFromHtmlCommentWithJavaScript(t *testing.T) {
 	expected := 1
 	extractUrlsFromHtmlComment(ctx, testConfig, commentNode, q, domain, registeredDomain)
 
-	finalCount := q.GetNCrawledUrls()
+	finalCount := q.GetNFoundUrls()
 	if finalCount != expected {
 		t.Errorf("Expected URL to be added to queue from JavaScript comment, got expected: %d, final: %d", expected, finalCount)
 	}
@@ -161,7 +161,7 @@ func TestProcessOtherElementsWithMultipleAttributes(t *testing.T) {
 	expected := 1
 	processOtherElements(ctx, testConfig, formNode, q, intrsAttrKeys, domain, registeredDomain)
 
-	finalCount := q.GetNCrawledUrls()
+	finalCount := q.GetNFoundUrls()
 	if finalCount != expected {
 		t.Errorf("Expected URL to be added to queue from form element, got expected: %d, final: %d", expected, finalCount)
 	}
@@ -193,7 +193,7 @@ func TestProcessOtherElementsIgnoresIrrelevantAttributes(t *testing.T) {
 	expected := 0
 	processOtherElements(ctx, testConfig, elemNode, q, intrsAttrKeys, domain, registeredDomain)
 
-	finalCount := q.GetNCrawledUrls()
+	finalCount := q.GetNFoundUrls()
 	// Should not add anything since 'src' attribute is not present
 	if finalCount != expected {
 		t.Errorf("Expected no URLs to be added (only non-interesting attributes), got expected: %d, final: %d", expected, finalCount)
@@ -211,7 +211,7 @@ func TestRegexTextForUrlsNoMatch(t *testing.T) {
 	expected := 0
 	regexTextForUrls(ctx, testConfig, text, q, domain, registeredDomain)
 
-	finalCount := q.GetNCrawledUrls()
+	finalCount := q.GetNFoundUrls()
 	// Should not add anything since text has no URLs
 	if finalCount != expected {
 		t.Errorf("Expected no URLs to be added from text without URLs, got expected: %d, final: %d", expected, finalCount)
@@ -232,7 +232,7 @@ func TestExtractUrlsFromHtmlCommentEmpty(t *testing.T) {
 	expected := 0
 	extractUrlsFromHtmlComment(ctx, testConfig, commentNode, q, domain, registeredDomain)
 
-	finalCount := q.GetNCrawledUrls()
+	finalCount := q.GetNFoundUrls()
 	// Should not add anything since comment is empty
 	if finalCount != expected {
 		t.Errorf("Expected no URLs to be added from empty comment, got expected: %d, final: %d", expected, finalCount)
@@ -261,7 +261,7 @@ func TestProcessOtherElementsInvalidURL(t *testing.T) {
 	expected := 0
 	processOtherElements(ctx, testConfig, elemNode, q, intrsAttrKeys, domain, registeredDomain)
 
-	finalCount := q.GetNCrawledUrls()
+	finalCount := q.GetNFoundUrls()
 	// Should not add anything since ftp:// URLs don't pass validation
 	if finalCount != expected {
 		t.Errorf("Expected no URLs to be added (invalid scheme), got expected: %d, final: %d", expected, finalCount)
@@ -279,7 +279,7 @@ func TestRegexTextForUrlsWithQueryString(t *testing.T) {
 	expected := 1
 	regexTextForUrls(ctx, testConfig, text, q, domain, registeredDomain)
 
-	finalCount := q.GetNCrawledUrls()
+	finalCount := q.GetNFoundUrls()
 	if finalCount != expected {
 		t.Errorf("Expected URL to be added to queue with query parameters, got expected: %d, final: %d", expected, finalCount)
 	}
@@ -307,7 +307,7 @@ func TestProcessComplexElementsSimpleUrl(t *testing.T) {
 	expected := 1
 	processComplexElements(ctx, testConfig, aNode, q, intrsAttrKeys, domain, registeredDomain)
 
-	finalCount := q.GetNCrawledUrls()
+	finalCount := q.GetNFoundUrls()
 	if finalCount != expected {
 		t.Errorf("Expected simple URL to be added to queue, got expected: %d, final: %d", expected, finalCount)
 	}
@@ -339,7 +339,7 @@ func TestProcessComplexElementsJavaScriptCode(t *testing.T) {
 	// Allow goroutines to complete (queue.AddUrl spawns a goroutine)
 	time.Sleep(10 * time.Millisecond)
 
-	finalCount := q.GetNCrawledUrls()
+	finalCount := q.GetNFoundUrls()
 	if finalCount != expected {
 		t.Errorf("Expected URL to be extracted from JavaScript code, got expected: %d, final: %d", expected, finalCount)
 	}
@@ -373,7 +373,7 @@ func TestProcessComplexElementsMixedAttributes(t *testing.T) {
 
 	time.Sleep(10 * time.Millisecond)
 
-	finalCount := q.GetNCrawledUrls()
+	finalCount := q.GetNFoundUrls()
 	// Should extract from both src and onclick attributes
 	if finalCount != expected {
 		t.Errorf("Expected URLs to be added from mixed attributes, got expected: %d, final: %d", expected, finalCount)
@@ -404,7 +404,7 @@ func TestProcessComplexElementsOnclickWithFunctionCall(t *testing.T) {
 
 	time.Sleep(10 * time.Millisecond)
 
-	finalCount := q.GetNCrawledUrls()
+	finalCount := q.GetNFoundUrls()
 	if finalCount != expected {
 		t.Errorf("Expected URL to be extracted from function call, got expected: %d, final: %d", expected, finalCount)
 	}
@@ -436,7 +436,7 @@ func TestProcessComplexElementsIgnoresNonInterestingAttributes(t *testing.T) {
 	expected := 0
 	processComplexElements(ctx, testConfig, elemNode, q, intrsAttrKeys, domain, registeredDomain)
 
-	finalCount := q.GetNCrawledUrls()
+	finalCount := q.GetNFoundUrls()
 	// Should not add anything since no interesting attributes present
 	if finalCount != expected {
 		t.Errorf("Expected no URLs to be added (non-interesting attributes), got expected: %d, final: %d", expected, finalCount)
@@ -465,7 +465,7 @@ func TestProcessComplexElementsEmptyAttribute(t *testing.T) {
 	expected := 0
 	processComplexElements(ctx, testConfig, aNode, q, intrsAttrKeys, domain, registeredDomain)
 
-	finalCount := q.GetNCrawledUrls()
+	finalCount := q.GetNFoundUrls()
 	// Should not add anything since attribute is empty
 	if finalCount != expected {
 		t.Errorf("Expected no URLs to be added from empty attribute, got expected: %d, final: %d", expected, finalCount)
@@ -496,7 +496,7 @@ func TestProcessComplexElementsMultipleUrls(t *testing.T) {
 
 	time.Sleep(10 * time.Millisecond)
 
-	finalCount := q.GetNCrawledUrls()
+	finalCount := q.GetNFoundUrls()
 	if finalCount != expected {
 		t.Errorf("Expected multiple URLs to be added from JavaScript, got expected: %d, final: %d", expected, finalCount)
 	}
@@ -538,13 +538,13 @@ func TestCrawlHtml(t *testing.T) {
 		Body: io.NopCloser(strings.NewReader(htmlContent)),
 	}
 
-	initialCount := q.GetNCrawledUrls()
-	CrawlHtml(ctx, testConfig, response, q, domain, registeredDomain)
+	initialCount := q.GetNFoundUrls()
+	CrawlHtml(ctx, testConfig, response.Body, q, domain, registeredDomain)
 
 	// Allow goroutines to complete
 	time.Sleep(20 * time.Millisecond)
 
-	finalCount := q.GetNCrawledUrls()
+	finalCount := q.GetNFoundUrls()
 	extractedCount := finalCount - initialCount
 	expectedCount := 7 // style, script.js, about, contact, submit, data (fetch), admin (comment). Note: api comment may not match due to regex limitations
 
@@ -576,12 +576,12 @@ func TestCrawlHtmlWithMultipleElements(t *testing.T) {
 		Body: io.NopCloser(strings.NewReader(htmlContent)),
 	}
 
-	initialCount := q.GetNCrawledUrls()
-	CrawlHtml(ctx, testConfig, response, q, domain, registeredDomain)
+	initialCount := q.GetNFoundUrls()
+	CrawlHtml(ctx, testConfig, response.Body, q, domain, registeredDomain)
 
 	time.Sleep(20 * time.Millisecond)
 
-	finalCount := q.GetNCrawledUrls()
+	finalCount := q.GetNFoundUrls()
 	extractedCount := finalCount - initialCount
 	expectedCount := 6 // page2, page3, lib.js, submit, embed, object. Note: page1 from comment may not match due to regex limitations
 
@@ -609,12 +609,12 @@ func TestCrawlHtmlWithNoUrls(t *testing.T) {
 		Body: io.NopCloser(strings.NewReader(htmlContent)),
 	}
 
-	initialCount := q.GetNCrawledUrls()
-	CrawlHtml(ctx, testConfig, response, q, domain, registeredDomain)
+	initialCount := q.GetNFoundUrls()
+	CrawlHtml(ctx, testConfig, response.Body, q, domain, registeredDomain)
 
 	time.Sleep(10 * time.Millisecond)
 
-	finalCount := q.GetNCrawledUrls()
+	finalCount := q.GetNFoundUrls()
 	extractedCount := finalCount - initialCount
 	expectedCount := 0 // No URLs in the HTML
 
@@ -643,12 +643,12 @@ func TestCrawlHtmlWithMalformedHTML(t *testing.T) {
 		Body: io.NopCloser(strings.NewReader(htmlContent)),
 	}
 
-	initialCount := q.GetNCrawledUrls()
-	CrawlHtml(ctx, testConfig, response, q, domain, registeredDomain)
+	initialCount := q.GetNFoundUrls()
+	CrawlHtml(ctx, testConfig, response.Body, q, domain, registeredDomain)
 
 	time.Sleep(20 * time.Millisecond)
 
-	finalCount := q.GetNCrawledUrls()
+	finalCount := q.GetNFoundUrls()
 	extractedCount := finalCount - initialCount
 	expectedCount := 2 // page1, page2 (both from <a> tags)
 
@@ -681,12 +681,12 @@ func TestCrawlHtmlWithNestedElements(t *testing.T) {
 		Body: io.NopCloser(strings.NewReader(htmlContent)),
 	}
 
-	initialCount := q.GetNCrawledUrls()
-	CrawlHtml(ctx, testConfig, response, q, domain, registeredDomain)
+	initialCount := q.GetNFoundUrls()
+	CrawlHtml(ctx, testConfig, response.Body, q, domain, registeredDomain)
 
 	time.Sleep(20 * time.Millisecond)
 
-	finalCount := q.GetNCrawledUrls()
+	finalCount := q.GetNFoundUrls()
 	extractedCount := finalCount - initialCount
 	expectedCount := 2 // page1, nested.js
 

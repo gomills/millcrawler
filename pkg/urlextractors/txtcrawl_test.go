@@ -10,8 +10,8 @@ import (
 	"time"
 
 	http "github.com/bogdanfinn/fhttp"
-	"github.com/gomills/gofocusedcrawler/internal/config"
-	"github.com/gomills/gofocusedcrawler/pkg/queue"
+	"github.com/gomills/millcrawler/pkg/config"
+	"github.com/gomills/millcrawler/pkg/queue"
 )
 
 var txtTestConfig = &config.Config{
@@ -45,7 +45,7 @@ Sitemap: //cdn.example.com/sitemap.xml
 		Body: io.NopCloser(strings.NewReader(robotsContent)),
 	}
 
-	CrawlTxt(ctx, txtTestConfig, robotsUrl, response, q, txtDomain, txtRegisteredDomain)
+	CrawlTxt(ctx, txtTestConfig, robotsUrl, response.Body, q, txtDomain, txtRegisteredDomain)
 	time.Sleep(10 * time.Millisecond)
 
 	extractedUrls := q.GetFoundUrls()
@@ -88,11 +88,11 @@ Sitemap: //cdn.example.com/sitemap.xml
 		Body: io.NopCloser(strings.NewReader(textContent)),
 	}
 
-	initialCount := q.GetNCrawledUrls()
-	CrawlTxt(ctx, txtTestConfig, nonRobotsUrl, response, q, txtDomain, txtRegisteredDomain)
+	initialCount := q.GetNFoundUrls()
+	CrawlTxt(ctx, txtTestConfig, nonRobotsUrl, response.Body, q, txtDomain, txtRegisteredDomain)
 	time.Sleep(10 * time.Millisecond)
 
-	finalCount := q.GetNCrawledUrls()
+	finalCount := q.GetNFoundUrls()
 	extractedCount := finalCount - initialCount
 
 	if extractedCount != 0 {

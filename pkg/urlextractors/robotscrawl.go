@@ -5,9 +5,9 @@ import (
 	"context"
 	"strings"
 
-	"github.com/gomills/gofocusedcrawler/internal/config"
-	"github.com/gomills/gofocusedcrawler/pkg/queue"
-	"github.com/gomills/gofocusedcrawler/pkg/urlvalidator"
+	"github.com/gomills/millcrawler/pkg/config"
+	"github.com/gomills/millcrawler/pkg/queue"
+	"github.com/gomills/millcrawler/pkg/urlvalidator"
 )
 
 // extractUrlsFromRobots performs a URL extraction from robots by parsing it. This functions extracts ALL URLs, it doesn't respect ROBOTS.txt at all.

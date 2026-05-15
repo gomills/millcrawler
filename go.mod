@@ -1,4 +1,4 @@
-module github.com/gomills/gofocusedcrawler
+module github.com/gomills/millcrawler
 
 go 1.24.1
 

@@ -3,7 +3,7 @@ package urlvalidator
 import (
 	"testing"
 
-	"github.com/gomills/gofocusedcrawler/internal/config"
+	"github.com/gomills/millcrawler/pkg/config"
 )
 
 var (

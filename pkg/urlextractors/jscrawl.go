@@ -5,10 +5,9 @@ import (
 	"io"
 	"strings"
 
-	http "github.com/bogdanfinn/fhttp"
-	"github.com/gomills/gofocusedcrawler/internal/config"
-	"github.com/gomills/gofocusedcrawler/pkg/queue"
-	"github.com/gomills/gofocusedcrawler/pkg/urlvalidator"
+	"github.com/gomills/millcrawler/pkg/config"
+	"github.com/gomills/millcrawler/pkg/queue"
+	"github.com/gomills/millcrawler/pkg/urlvalidator"
 	tree_sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_javascript "github.com/tree-sitter/tree-sitter-javascript/bindings/go"
 )
@@ -35,9 +34,9 @@ var relevantParentTypes = map[string]struct{}{
 }
 
 // CrawlJs parses JavaScript code, extracts possible URLs, validates them, and adds them to the queue.
-func CrawlJs(ctx context.Context, config *config.Config, response *http.Response, qp *queue.Queue, domain string, registeredDomain string) {
+func CrawlJs(ctx context.Context, config *config.Config, jsFile io.ReadCloser, qp *queue.Queue, domain string, registeredDomain string) {
 
-	code, err := io.ReadAll(response.Body)
+	code, err := io.ReadAll(jsFile)
 	if err != nil {
 		return
 	}
@@ -72,7 +71,7 @@ func CrawlJs(ctx context.Context, config *config.Config, response *http.Response
 
 }
 
-// traverseLoop walks the AST from bottom left to right until root and processes each node for potential URLs.
+// traverseLoop walks the AST from bottom left to right until root while processing each node for potential URLs.
 // It's NOT recursive.
 func traverseLoop(cursor *tree_sitter.TreeCursor, foundUrls *[]string, code []byte) {
 

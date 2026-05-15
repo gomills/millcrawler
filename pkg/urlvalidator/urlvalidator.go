@@ -5,11 +5,12 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/gomills/gofocusedcrawler/internal/config"
+	"github.com/gomills/millcrawler/pkg/config"
 	"golang.org/x/net/publicsuffix"
 )
 
-// ValidateStringForUrl validates a URL as a string based on heuristics, cleans and parses it.
+// ValidateStringForUrl validates a URL as a string based on heuristics, returning it, if valid,
+// cleaned and parsed.
 // Returns not-nil error if not valid.
 func ValidateStringForUrl(config *config.Config, possibleUrl string, domain string, registeredDomain string) (*url.URL, error) {
 

@@ -2,12 +2,12 @@ package urlsextractors
 
 import (
 	"context"
+	"io"
 	"strings"
 
-	http "github.com/bogdanfinn/fhttp"
-	"github.com/gomills/gofocusedcrawler/internal/config"
-	"github.com/gomills/gofocusedcrawler/pkg/queue"
-	"github.com/gomills/gofocusedcrawler/pkg/urlvalidator"
+	"github.com/gomills/millcrawler/pkg/config"
+	"github.com/gomills/millcrawler/pkg/queue"
+	"github.com/gomills/millcrawler/pkg/urlvalidator"
 	"golang.org/x/net/html"
 )
 
@@ -28,10 +28,10 @@ var elementInterestingAttributes = map[string][]string{
 
 // CrawlHtml iterates over an .html file to extract urls from element's attributes. Returns nothing because
 // appends urls to the passed queue.
-func CrawlHtml(ctx context.Context, config *config.Config, response *http.Response, qp *queue.Queue, domain string, registeredDomain string) {
+func CrawlHtml(ctx context.Context, config *config.Config, htmlFile io.ReadCloser, qp *queue.Queue, domain string, registeredDomain string) {
 
 	// get the root node
-	rootNode, err := html.Parse(response.Body)
+	rootNode, err := html.Parse(htmlFile)
 	if err != nil {
 		return
 	}

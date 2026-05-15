@@ -1,47 +1,79 @@
-# Stealth refactor
+# Millcrawler
 
-This codebase has been updated with:
+```text
+username@COMPUTERID:~/$ ./millcrawler -domain=crawler-test.com -printurls=true
 
-- testing files for most of packages coverage
-- fixed issues and bugs
-- improved documentation with README.md's on each package and inline comments
-- improved predictability, now the crawler outputs same results in a structured fashion
-- simplified url extraction, now they only come from .js, .html, robots.txt, sitemap.xml and error payloads
+                _ _ _                         _           
+               (_) | |                       | |          
+      _ __ ___  _| | | ___ _ __ __ ___      _| | ___ _ __ 
+     | '_ ' _ \| | | |/ __| '__/ _' \ \ /\ / / |/ _ \ '__|
+     | | | | | | | | | (__| | | (_| |\ V  V /| |  __/ |   
+     |_| |_| |_|_|_|_|\___|_|  \__,_| \_/\_/ |_|\___|_|   
+----------------------------------------------------------- by github.com/gomills
+                             
 
-## What GOFOCUSEDCRAWLER brings new to the table:
+https://internal.crawler-test.com/
+https://crawler-test.com/
+https://crawler-test.com/robots.txt
+https://crawler-test.com/sitemap.xml
+https://crawler-test.com/mobile/separate_desktop_with_different_links_out
+https://crawler-test.com/mobile/separate_desktop_with_mobile_not_subdomain
+https://crawler-test.com/mobile/dynamic
+[···]
+^C
+{"Domain":"crawler-test.com","NumURLs":28,"DurationSeconds":5.691633071,"StopReason":"context canceled","SecretsFound":0,"SecretsMap":{}}
+```
 
-- **Intuitive, granular control**  
-  Through config, the crawler is controlled by these parameters:
-  ```go
-  TimeOutDuration
-  AllowedExternalDomains
-  MaxPathDepth
-  SensitivePatterns
-  AllowedExtensions
-  Workers
-  ```
+Configurable web crawler for static crawling (no java execution) that outputs a predictable `.json`, characterized by:
 
-- **Tree-Sitter parsing for `.js`.**  
-  Fast, lightweight, yet precise parsing allows selective extraction of URLs from JavaScript files. It won’t miss them as long as they are within the heuristics. Thorough parsing is especially important because most sensitive endpoints are found in JavaScript.
+- browser-fingerprinted-TLS client
+- targeted urls extraction from: `.js`, `.html`, `robots.txt`, `sitemap.xml` and HTTP error payloads
+- *tree-sitter* parsing for javascript
+- Smart, custom URL validation heuristics
+- optional secrets detection, although manual implementation of secrets is necessary in `pkg/secrets/secrets.go` 
+- stops abruptly on first 429 antibot response status code
+- testing coverage for most packages
 
-- **Extensive URL extraction from HTML.**  
-  Not limited to a `"follow a[href]"` algorithm. Like `.js` files, heuristics were extended to avoid missing important URLs. Elements and attributes were carefully selected.
+## Paradigm
 
-- **Smart, custom URL validation heuristics.**  
-  Beyond extraction, URLs are validated per the user's config:  
-  - Accept URLs with allowed file extensions.  
-  - Accept subpages (`.htm`, `.html`, or no extension`) only if the path depth is within limits (bypassed by sensitive patterns).  
-  - Same logic applies to **any and all subdomains**.  
-  - External URLs are kept only if they match allowed domains (e.g., `github.com`), but they won’t be crawled.
+Instead of betting on a massive crawl following anything but mostly on HTML's `<a href="">`, `millcrawler` invests on parsing and targetting specific static attributes of *JavaScript* and *HTML* while filtering out most of useless urls.
 
-- **Exits on first 429 status code.**  
-  Once flagged by a server, further requests are usually futile.
+## Options
 
-- **Bruteforces certain URLs**, such as `sitemap` and some subdomains like `dev.` or `staging.`
+```text
+username@COMPUTERID:~/$ ./millcrawler -h
+Usage of ./millcrawler:
+  -allowedextdomains string
+        Comma-separated list of allowed external domains. Example: 'github.com,gitlab.com'
+  -allowedextensions string
+        Comma-separated list of allowed file extensions. Example: '.html,.js,.json,.git,.yaml' (default ",.htm,.html,.js")
+  -bruteforcesubdomains
+        Enable subdomain bruteforcing. E.g: 'true' for testing.example.com, admin.example.com, ... (default true)
+  -cookies
+        Enable cookie jar for use during crawling
+  -domain string
+        Target domain to crawl. Example: 'example.com'
+  -maxnumurls int
+        Maximum number of URLs to crawl before stopping (default 100)
+  -maxpathdepth int
+        Maximum URL path depth to crawl. Example: '2' allows '/path1/path2' (default 1)
+  -printurls
+        Interactive logging: banner, URLs, to stdout.
+  -scansecrets
+        Decide if scan responses for secrets
+  -sensitivepatterns string
+        Comma-separated URL patterns that bypass max path depth restrictions. Example: 'api,admin,debug'
+  -timeoutseconds int
+        Maximum crawl duration in seconds. Example: '60' (default 60)
+  -workers int
+        Number of concurrent crawling workers (default 1)
+```
 
-- **URL regexing on error payloads** for debugging sensitive endpoint leaks. This could be further expanded with headers in the future.
+## Building from source
 
-- **Fully synchronized goroutines.** Once a stop signal is fired, all close automatically thorugh shared context immediately, and no further requests proceed. 
-
-- **Fully modularized, encapsulated codebase.**  
-  Well documented, intuitive, easily modifiable and refactorable, and can be deployed in distributed architectures with minor changes.
+```bash
+git clone https://github.com/gomills/millcrawler
+cd millcrawler
+go build
+./millcrawler -h
+```
