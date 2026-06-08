@@ -65,10 +65,12 @@ func crawlUrl(ctx context.Context, client tls_client.HttpClient, config *config.
 		return nil
 	}
 
-	// 4.0. from external domains just look for secrets, not urls
+	// 4.0. from external domains don't crawl, just look for secrets if enabled
 	isLocal, err := utilities.IsLocalUrl(url, registeredDomain)
-	if (err != nil || !isLocal) && config.ScanSecrets {
-		scanSecrets(qp, response.Header, url.String(), bodyBytes)
+	if err != nil || !isLocal {
+		if config.ScanSecrets {
+			scanSecrets(qp, response.Header, url.String(), bodyBytes)
+		}
 		return nil
 	}
 

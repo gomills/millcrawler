@@ -87,9 +87,10 @@ func worker(q *queue.Queue, ctx context.Context, config *config.Config, client t
 	for {
 
 		// 1. check if we hit maximum crawled urls
-		nCrawledUrls := q.GetNCrawledUrls()
-		if nCrawledUrls >= config.MaxNCrawledUrls {
-			return errors.New("hit crawled urls limit")
+		if config.MaxNCrawledUrls > 0 {
+			if q.GetNCrawledUrls() >= config.MaxNCrawledUrls {
+				return errors.New("hit crawled urls limit")
+			}
 		}
 
 		// 2. consume a url from the queue.
