@@ -1,7 +1,7 @@
 # Millcrawler
 
 ```text
-username@COMPUTERID:~/$ ./millcrawler -domain=crawler-test.com -printurls=true
+~/$ ./millcrawler -domain=crawler-test.com -printurls=true
 
                 _ _ _                         _           
                (_) | |                       | |          
@@ -29,44 +29,52 @@ Configurable web crawler for static crawling (no java execution) that outputs a 
 - browser-fingerprinted-TLS client
 - targeted urls extraction from: `.js`, `.html`, `robots.txt`, `sitemap.xml` and HTTP error payloads
 - *tree-sitter* parsing for javascript
-- Smart, custom URL validation heuristics
+- smart, custom URL validation heuristics
 - optional secrets detection, although manual implementation of secrets is necessary in `pkg/secrets/secrets.go` 
 - stops abruptly on first 429 antibot response status code
-- testing coverage for most packages
+- extensive testing coverage for most packages
 
 ## Paradigm
 
 Instead of betting on a massive crawl following anything but mostly on HTML's `<a href="">`, `millcrawler` invests on parsing and targetting specific static attributes of *JavaScript* and *HTML* while filtering out most of useless urls.
 
+## Notes
+
+By design it will include false positives urls, strings that because of .js parsing they were taken into the queue as relative urls when they were just anything else.
+
+If interactive urls printing is enabled, all urls coming out of the queue fresh will be printed. This doesn't mean they've been successfully crawled or if they will even be crawled. For example, external urls won't be crawled, just scanned for secrets if enabled.
+
+It performs static analysis of `.js` so constructed and formatted urls won't be crawled.
+
 ## Options
 
 ```text
-username@COMPUTERID:~/$ ./millcrawler -h
+~/$ ./millcrawler -h
 Usage of ./millcrawler:
   -allowedextdomains string
-        Comma-separated list of allowed external domains. Example: 'github.com,gitlab.com'
+        Comma-separated list of allowed external domains. Example: -allowedextdomains=github.com,gitlab.com (default "github.com,gitlab.com,docker.com,pastebin.com,nuget.org,bitbucket.org,s3.amazonaws.com,telegram.org,slack.com,drive.google.com,docs.google.com,codeberg.org")
   -allowedextensions string
-        Comma-separated list of allowed file extensions. Example: '.html,.js,.json,.git,.yaml' (default ",.htm,.html,.js")
+        Comma-separated list of allowed file extensions ('' for subpages...). Example: allowedextensions=,.html,.js,.json (default ",.js,.ts,.map,.properties,.log,.cfg,.pem,.crt,.npmrc,.yarnrc,.html,.htm,.json,.yaml,.yml,.env,.conf,.xml,.txt,.py,.php,.git,.sh,.key,.go,.ini,.example,.md,.rb,.java,.cpp,.c,.pl,.zsh,.bak,.old,.sql,.db,.tar,.gz,.zip,.ovpn,.toml")
   -bruteforcesubdomains
-        Enable subdomain bruteforcing. E.g: 'true' for testing.example.com, admin.example.com, ... (default true)
+        Enable subdomain bruteforcing. Example: -bruteforcesubdomains=true
   -cookies
-        Enable cookie jar for use during crawling
+        Enable cookie jar for use during crawling. Example: -cookies=true
   -domain string
-        Target domain to crawl. Example: 'example.com'
+        Target domain to crawl. Example: -domain=example.com
   -maxnumurls int
-        Maximum number of URLs to crawl before stopping (default 100)
+        Maximum number of URLs to crawl before stopping, 0 for unlimited. Example: -maxnumurls=400
   -maxpathdepth int
-        Maximum URL path depth to crawl. Example: '2' allows '/path1/path2' (default 1)
+        Maximum URL path depth to crawl, 0 for unlimited. Example: -maxpathdepth=2 allows /path1/path2 but not /path1/path2/path3
   -printurls
-        Interactive logging: banner, URLs, to stdout.
+        Interactive logging: banner and URLs to stdout. If disabled, it outputs .json results directly for scripting integration. Example: -printurls=true
   -scansecrets
-        Decide if scan responses for secrets
+        Decide if scan responses for secrets. Example: -scansecrets=true
   -sensitivepatterns string
-        Comma-separated URL patterns that bypass max path depth restrictions. Example: 'api,admin,debug'
+        Comma-separated URL patterns that bypass max path depth restrictions. Example: sensitivepatterns=api,admin,debug
   -timeoutseconds int
-        Maximum crawl duration in seconds. Example: '60' (default 60)
+        Maximum crawl duration in seconds, never unlimited. Example: -timeoutseconds=60 (default 3600)
   -workers int
-        Number of concurrent crawling workers (default 1)
+        Number of concurrent crawling workers. Example: -workers=10 (default 1)
 ```
 
 ## Building from source
@@ -74,6 +82,7 @@ Usage of ./millcrawler:
 ```bash
 git clone https://github.com/gomills/millcrawler
 cd millcrawler
+go test ./... # optional: run tests
 go build
 ./millcrawler -h
 ```
