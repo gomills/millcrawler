@@ -65,9 +65,10 @@ func validateSubpage(config *config.Config, parsedUrl *url.URL) (*url.URL, error
 	urlPathDepth := getPathDepth(parsedUrl.Path)
 
 	// 2.0 if it's in the allowed range it's valid instantly
-	if urlPathDepth <= config.MaxPathDepth {
+	if config.MaxPathDepth == 0 {
 		return parsedUrl, nil
-
+	} else if urlPathDepth <= config.MaxPathDepth {
+		return parsedUrl, nil
 		// 2.1 otherwise only valid if it has a sensitive pattern
 	} else if hasSensitivePattern(config, parsedUrl.Path) {
 		return parsedUrl, nil
